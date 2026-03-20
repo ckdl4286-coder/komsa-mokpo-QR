@@ -1,13 +1,24 @@
-'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './admin.module.css';
-import { Copy, Link as LinkIcon, BarChart2, Edit2, Trash2, Calendar, User, Users, CalendarDays, Settings, Star, ExternalLink, Activity, Target, PlusCircle, Ship as ShipIcon, ChevronRight, Heart } from 'lucide-react';
+import { Copy, Link as LinkIcon, BarChart2, Edit2, Trash2, Calendar, User, Users, CalendarDays, Settings, Star, ExternalLink, Activity, Target, PlusCircle, Ship as ShipIcon, ChevronRight, Heart, AlertCircle, RotateCcw } from 'lucide-react';
 import { updateCoreLink, updateWeather, deleteCustomLink, addCustomLink } from './actions';
 
 export default function ShipDashboard({ ship, config, overallStats, urlOrigin, isGlobal = false }: any) {
   const [tab, setTab] = useState(isGlobal ? 'stats' : 'links');
   const [editing, setEditing] = useState<string | null>(null);
   const [editingVal, setEditingVal] = useState('');
+  
+  // Safety Features State
+  const [deleteConfirmLink, setDeleteConfirmLink] = useState<any>(null); // Link to delete
+  const [undoLinkToast, setUndoLinkToast] = useState<any>(null); // Post-deletion info for restore
+
+  // Auto-hide undo toast after 5s
+  useEffect(() => {
+    if (undoLinkToast) {
+       const timer = setTimeout(() => setUndoLinkToast(null), 5000);
+       return () => clearTimeout(timer);
+    }
+  }, [undoLinkToast]);
 
   const publicUrl = `${urlOrigin}/${ship.urlSlug}`;
 
@@ -27,6 +38,20 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
     await updateWeather(formData);
     setEditing(null);
     window.location.reload();
+  };
+
+  const executeDeleteLink = async () => {
+    if (!deleteConfirmLink) return;
+    const linkToUndo = { ...deleteConfirmLink };
+    await deleteCustomLink(deleteConfirmLink.id);
+    setUndoLinkToast(linkToUndo);
+    setDeleteConfirmLink(null);
+  };
+
+  const handleRestoreLink = async () => {
+    if (!undoLinkToast) return;
+    await addCustomLink(ship.id, undoLinkToast.title, undoLinkToast.url);
+    setUndoLinkToast(null);
   };
 
   const activeLinksCnt = isGlobal ? 0 : 2 + (ship.checklistUrl ? 1 : 0) + (ship.regulationsUrl ? 1 : 0) + (ship.safetyInfoUrl ? 1 : 0) + (ship.links?.filter((l:any)=>l.url!=='tracking-only')?.length || 0);
@@ -160,10 +185,37 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
                   </div>
                </div>
                <div className={styles.actions}>
-                  <button className={`${styles.actionBtn} ${styles.danger}`} onClick={()=>deleteCustomLink(l.id)}><Trash2 size={14}/> 삭제</button>
+                  <button className={`${styles.actionBtn} ${styles.danger}`} onClick={()=>setDeleteConfirmLink(l)}><Trash2 size={14}/> 삭제</button>
                </div>
              </div>
           ))}
+
+          {/* Link Deletion Modal */}
+          {deleteConfirmLink && (
+            <div className={styles.modalOverlay}>
+              <div className={styles.modal}>
+                <div className={styles.modalIcon}><AlertCircle size={32} /></div>
+                <div className={styles.modalTitle}>링크 삭제</div>
+                <div className={styles.modalDesc}>
+                  <strong>[{deleteConfirmLink.title}]</strong> 링크를 삭제하시겠습니까?
+                </div>
+                <div className={styles.modalActions}>
+                  <button className={styles.cancelBtn} onClick={() => setDeleteConfirmLink(null)}>취소</button>
+                  <button className={styles.confirmBtn} onClick={executeDeleteLink}>네, 삭제합니다</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Link Undo Toast */}
+          {undoLinkToast && (
+            <div className={styles.undoToast}>
+              <span style={{ fontSize: '0.9rem' }}>링크가 삭제되었습니다.</span>
+              <button className={styles.undoBtn} onClick={handleRestoreLink}>
+                <RotateCcw size={14} style={{ marginRight: '0.4rem' }} /> 되돌릴래요!
+              </button>
+            </div>
+          )}
         </div>
       )}
 

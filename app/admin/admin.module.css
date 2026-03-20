@@ -103,7 +103,7 @@
 .shipList { display: flex; flex-wrap: wrap; gap: 0.75rem; max-height: 250px; overflow-y: auto; padding: 0.5rem; background: #f8fafc; border-radius: 12px; border: 1px solid #f1f5f9; }
 .shipList::-webkit-scrollbar { width: 5px; }
 .shipList::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-.shipItem { padding: 0.6rem 1.2rem; border-radius: 99px; border: 1px solid #e2e8f0; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 0.5rem; text-align: center; background: white; color: #64748b; font-weight: 600; font-size: 0.9rem; }
+.shipItem { padding: 0.6rem 1.2rem; border-radius: 99px; border: 1px solid #e2e8f0; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 0.5rem; text-align: center; background: white; color: #64748b; font-weight: 600; font-size: 0.9rem; position: relative; }
 .shipItem:hover { background: #f1f5f9; color: #1e293b; }
 .shipItem.active { background: #238299; border-color: #238299; color: white; box-shadow: 0 4px 12px rgba(35, 130, 153, 0.3); }
 .shipItemIcon { color: inherit; flex-shrink: 0; }
@@ -111,3 +111,52 @@
 .emptyState { background: white; border-radius: 20px; padding: 5rem 2rem; text-align: center; border: 2px dashed #e2e8f0; }
 .emptyState h3 { font-size: 1.25rem; color: #475569; margin: 1rem 0 0.5rem; }
 .emptyState p { color: #94a3b8; font-size: 0.95rem; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Safety UI Styling */
+.modalOverlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; animation: fadeIn 0.2s ease-out;
+}
+.modal {
+  background: white; width: 90%; max-width: 400px; border-radius: 24px;
+  padding: 2.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); text-align: center;
+}
+.modalIcon {
+  width: 64px; height: 64px; border-radius: 20px; background: #fee2e2;
+  color: #ef4444; display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+.modalTitle { font-size: 1.4rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem; }
+.modalDesc { color: #64748b; font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; }
+.modalActions { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.confirmBtn { background: #ef4444; color: white; padding: 0.85rem; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.2s; }
+.confirmBtn:hover { background: #dc2626; transform: translateY(-2px); }
+.cancelBtn { background: #f1f5f9; color: #475569; padding: 0.85rem; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
+.cancelBtn:hover { background: #e2e8f0; }
+
+.undoToast {
+  position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  background: #1e293b; color: white; padding: 1rem 1.75rem; border-radius: 20px;
+  display: flex; align-items: center; gap: 2rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  z-index: 10000; animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.undoBtn { background: #38bdf8; color: #0c4a6e; border: none; padding: 0.5rem 1rem; border-radius: 10px; font-weight: 900; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
+.undoBtn:hover { background: #7dd3fc; transform: scale(1.05); }
+
+@keyframes slideUp {
+  from { transform: translate(-50%, 150%); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.shipItemDelete {
+  opacity: 0; padding: 4px; border-radius: 6px; transition: 0.2s; color: #cbd5e1; margin-left: auto;
+}
+.shipItem:hover .shipItemDelete { opacity: 1; }
+.shipItemDelete:hover { background: rgba(239, 68, 68, 0.1); color: #ef4444; }

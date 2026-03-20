@@ -1,21 +1,56 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './admin.module.css';
-import { Search, Ship as ShipIcon, ChevronRight, LayoutDashboard, PlusCircle, MessageSquare, Anchor, BarChart3, PieChart } from 'lucide-react';
+import { Search, Ship as ShipIcon, ChevronRight, LayoutDashboard, PlusCircle, MessageSquare, Anchor, BarChart3, PieChart, Trash2, AlertCircle, RotateCcw } from 'lucide-react';
 import ShipDashboard from './ShipDashboard';
-import { addShip } from './actions';
+import { addShip, deleteShip } from './actions';
 
 export default function AdminDashboard({ ships, config, allClickEvents, urlOrigin }: any) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedShipId, setSelectedShipId] = useState<string | null>('global'); // Default to global stats
   const [isAddingShip, setIsAddingShip] = useState(false);
+  
+  // Safety Features State
+  const [deleteConfirm, setDeleteConfirm] = useState<any>(null); // Ship to delete
+  const [undoToast, setUndoToast] = useState<any>(null); // Last deleted ship data for restore
+
+  // Auto-hide undo toast after 5s
+  useEffect(() => {
+    if (undoToast) {
+       const timer = setTimeout(() => setUndoToast(null), 5000);
+       return () => clearTimeout(timer);
+    }
+  }, [undoToast]);
 
   const filteredShips = ships.filter((s: any) => 
     s.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const selectedShip = ships.find((s: any) => s.id === selectedShipId);
+
+  const handleDeleteRequest = (e: React.MouseEvent, ship: any) => {
+    e.stopPropagation();
+    setDeleteConfirm(ship);
+  };
+
+  const executeDelete = async () => {
+    if (!deleteConfirm) return;
+    const shipToUndo = { ...deleteConfirm };
+    await deleteShip(deleteConfirm.id);
+    setUndoToast(shipToUndo);
+    setDeleteConfirm(null);
+    if (selectedShipId === shipToUndo.id) setSelectedShipId('global');
+  };
+
+  const handleRestore = async () => {
+    if (!undoToast) return;
+    const formData = new FormData();
+    formData.append('name', undoToast.name);
+    formData.append('slug', undoToast.urlSlug);
+    await addShip(formData);
+    setUndoToast(null);
+  };
 
   // Stats calculation utility (KST)
   const calculateStats = (shipList: any[]) => {
@@ -157,6 +192,9 @@ export default function AdminDashboard({ ships, config, allClickEvents, urlOrigi
               >
                 <ShipIcon size={14} className={styles.shipItemIcon} />
                 <span>{ship.name}</span>
+                <span className={styles.shipItemDelete} onClick={(e) => handleDeleteRequest(e, ship)}>
+                   <Trash2 size={14} />
+                </span>
               </button>
             ))}
             {filteredShips.length === 0 && (
@@ -167,6 +205,32 @@ export default function AdminDashboard({ ships, config, allClickEvents, urlOrigi
 
         {/* Content Area (Bottom) */}
         <main className={styles.dashboardContent}>
+          {/* Deletion Confirmation Modal */}
+          {deleteConfirm && (
+            <div className={styles.modalOverlay}>
+              <div className={styles.modal}>
+                <div className={styles.modalIcon}><AlertCircle size={32} /></div>
+                <div className={styles.modalTitle}>선박 페이지 삭제</div>
+                <div className={styles.modalDesc}>
+                  <strong>[{deleteConfirm.name}]</strong> 선박의 모든 데이터(방문 기록, 링크 등)가 삭제됩니다. 계속하시겠습니까?
+                </div>
+                <div className={styles.modalActions}>
+                  <button className={styles.cancelBtn} onClick={() => setDeleteConfirm(null)}>취소</button>
+                  <button className={styles.confirmBtn} onClick={executeDelete}>네, 삭제합니다</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Undo Toast */}
+          {undoToast && (
+            <div className={styles.undoToast}>
+              <span style={{ fontSize: '0.9rem' }}>방금 <strong>[{undoToast.name}]</strong> 선박을 삭제했습니다.</span>
+              <button className={styles.undoBtn} onClick={handleRestore}>
+                <RotateCcw size={14} style={{ marginRight: '0.4rem' }} /> 되돌릴래요!
+              </button>
+            </div>
+          )}
           {isAddingShip && (
             <div className={styles.chartCard} style={{ animation: 'fadeIn 0.3s', maxWidth: '800px' }}>
               <div className={styles.chartHeader}><PlusCircle size={18} /> 새로운 선박 페이지 만들기</div>

@@ -68,6 +68,11 @@ export async function deleteCustomLink(id: string) {
   revalidatePath('/admin');
 }
 
+export async function deleteShip(id: string) {
+  await prisma.ship.delete({ where: { id } });
+  revalidatePath('/admin');
+}
+
 export async function updateShipInfo(shipId: string, data: any) {
   await prisma.ship.update({
     where: { id: shipId },
