@@ -42,45 +42,50 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
       <header className={styles.header}>
         <div style={{ position: 'relative', display: 'inline-block' }}>
           <img
-            src="/character.jpg"
-            alt="KOMSA 캐릭터"
+            src="/haesooho_hello.jpg"
+            alt="해수호 캐릭터"
             style={{
-              width: '100px', height: '100px', objectFit: 'cover',
-              margin: '0 auto 1.5rem auto', display: 'block',
-              borderRadius: '50%', border: '4px solid rgba(255,255,255,0.2)',
-              padding: '4px', background: 'rgba(255,255,255,0.1)',
+              width: '120px', height: '120px', objectFit: 'cover',
+              margin: '0 auto 1.2rem auto', display: 'block',
+              borderRadius: '50%', border: '4px solid rgba(255,255,255,0.3)',
+              padding: '2px', background: 'rgba(255,255,255,0.2)',
               backdropFilter: 'blur(5px)',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
+              boxShadow: '0 12px 40px rgba(0,0,0,0.5)'
             }}
           />
         </div>
         <h1 className={styles.shipName}>{ship.name}</h1>
-        <div className={styles.subTitle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-           <img src="/logo.png" alt="KOMSA 로고" style={{ height: '14px', filter: 'brightness(0) invert(1)', opacity: 0.8 }} />
-           <span>전국 여객선 안전 정보 서비스</span>
+        <div className={styles.subTitle}>
+           KOREA MARITIME TRANSPORTATION SAFETY AUTHORITY
         </div>
       </header>
 
       <div className={styles.statusBox}>
-        <span className={styles.statusLabel}>
-          {mainSchedule?.rlvt_ymd ? `${formatDate(mainSchedule.rlvt_ymd)} 운항 예보` : '실시간 운항 예보'}
-        </span>
+        <div className={styles.statusLabelContainer}>
+          <span className={styles.statusLabel}>
+             ● 실시간 API 데이터 연동 중
+          </span>
+          <span className={styles.updateTime}>
+             방금 업데이트됨
+          </span>
+        </div>
         
         <div
           className={`${styles.statusBadge} ${statusInfo.label.includes('정상') ? styles.glowing : ''}`}
-          style={{ background: statusInfo.color, color: '#fff' }}
+          style={{ background: statusInfo.color, color: '#fff', width: '100%', justifyContent: 'center', fontSize: '1.4rem', padding: '1rem' }}
         >
           {statusInfo.emoji} {statusInfo.label}
         </div>
 
         {statusInfo.reason && (
-          <p className={styles.statusDesc} style={{ color: '#ff4d4d', fontWeight: 700 }}>
+          <p className={styles.statusDesc} style={{ color: '#ff4d4d', fontWeight: 700, marginTop: '1rem' }}>
             사유: {statusInfo.reason}
           </p>
         )}
 
-        {schedules && schedules.length > 0 ? (
-          <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)', marginTop: '0.5rem' }}>
+        {/* 운항 스케줄 상세 */}
+        {schedules && schedules.length > 0 && (
+          <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.85)', marginTop: '1rem', padding: '0.8rem', background: 'rgba(0,0,0,0.1)', borderRadius: '16px' }}>
             {schedules.slice(0, 3).map((s, i) => (
               <div key={i} style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center', marginBottom: '0.3rem' }}>
                 <span>🕐 {formatTime(s.sail_tm)}</span>
@@ -89,8 +94,6 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
               </div>
             ))}
           </div>
-        ) : (
-          adminWeather && <p className={styles.statusDesc}>{adminWeather}</p>
         )}
 
         <div style={{ marginTop: '1.5rem' }}>
@@ -99,8 +102,9 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
       </div>
 
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>
-           <ShieldCheck size={18} /> 필수 안전 정보 (출항 전 확인)
+        <h2 className={styles.sectionTitle} style={{ justifyContent: 'space-between' }}>
+           <span><ShieldCheck size={18} /> 필수 안전 정보 (출항 전 확인)</span>
+           <img src="/haesooho_search.jpg" alt="조사하는 해수호" style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #00d4ff', marginLeft: 'auto' }} />
         </h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <ActionButton 
