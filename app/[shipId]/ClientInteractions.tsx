@@ -133,17 +133,17 @@ export function FavoriteButton({ shipId, shipName }: { shipId: string; shipName?
             ) : (
               <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1rem', marginBottom: '1rem' }}>
                 <p style={{ color: '#00d4ff', fontWeight: 700, marginBottom: '0.8rem', fontSize: '0.9rem' }}>
-                  📱 Android 사용자
+                  📱 안드로이드 사용자 (갤럭시 등)
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem', display: 'flex', gap: '0.5rem' }}>
-                    <span>1️⃣</span><span>우측 상단 <strong style={{color:'#fff'}}>점 세 개(⋮) 메뉴</strong> 탭</span>
+                    <span>1️⃣</span><span>메뉴 <strong style={{color:'#fff'}}>(⋮ 또는 ☰)</strong> 버튼 탭</span>
                   </div>
                   <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem', display: 'flex', gap: '0.5rem' }}>
-                    <span>2️⃣</span><span><strong style={{color:'#fff'}}>"홈 화면에 추가"</strong> 선택</span>
+                    <span>2️⃣</span><span><strong style={{color:'#fff'}}>"홈 화면에 추가"</strong> 또는 <strong style={{color:'#fff'}}>"앱 설치"</strong> 선택</span>
                   </div>
                   <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.85rem', display: 'flex', gap: '0.5rem' }}>
-                    <span>3️⃣</span><span><strong style={{color:'#fff'}}>"추가"</strong> 확인</span>
+                    <span>💡</span><span>삼성 브라우저는 <strong style={{color:'#fff'}}>"추가(+)"</strong> 메뉴에서도 찾을 수 있어요!</span>
                   </div>
                 </div>
               </div>
