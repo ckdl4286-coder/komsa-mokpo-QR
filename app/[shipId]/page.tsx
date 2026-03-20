@@ -171,7 +171,7 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
 
           {/* DB 링크 (중복 제외) */}
           {ship.links
-            .filter((link: any) => !link.title.includes('PATIS') && !link.title.includes('전기차'))
+            .filter((link: any) => !link.title.includes('PATIS') && !link.title.includes('전기차') && !link.title.includes('밴드'))
             .map((link: any) => (
             <ActionButton 
               key={link.id} 
