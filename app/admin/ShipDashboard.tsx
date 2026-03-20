@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import styles from './admin.module.css';
-import { Copy, Link as LinkIcon, BarChart2, Edit2, Trash2, Calendar, User, Users, CalendarDays, Settings, Star, ExternalLink, Activity, Target, PlusCircle, Ship as ShipIcon, ChevronRight } from 'lucide-react';
+import { Copy, Link as LinkIcon, BarChart2, Edit2, Trash2, Calendar, User, Users, CalendarDays, Settings, Star, ExternalLink, Activity, Target, PlusCircle, Ship as ShipIcon, ChevronRight, Heart } from 'lucide-react';
 import { updateCoreLink, updateWeather, deleteCustomLink, addCustomLink } from './actions';
 
 export default function ShipDashboard({ ship, config, overallStats, urlOrigin, isGlobal = false }: any) {
@@ -185,6 +185,11 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
                <div className={styles.statNum}>{overallStats.week}</div>
                <div className={styles.statLabel}>최근 7일 합계</div>
             </div>
+            <div className={styles.statCard} style={{ border: '2px solid rgba(255, 77, 77, 0.3)', background: 'rgba(255, 77, 77, 0.05)' }}>
+               <div className={`${styles.statIcon}`} style={{ background: '#ff4d4d', color: '#fff' }}><Heart size={20} fill="#fff"/></div>
+               <div className={styles.statNum} style={{ color: '#ff4d4d' }}>{isGlobal ? overallStats.totalFavorites : (ship.favoriteCount || 0)}</div>
+               <div className={styles.statLabel} style={{ color: '#ff4d4d', fontWeight: 700 }}>{isGlobal ? '전체 즐겨찾기' : '이 배를 찜한 사람'}</div>
+            </div>
             <div className={styles.statCard}>
                <div className={`${styles.statIcon} ${styles.teal}`}><Users size={20}/></div>
                <div className={styles.statNum}>{overallStats.total}</div>
@@ -205,28 +210,54 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
              </div>
           </div>
 
-          {isGlobal && overallStats.shipRank && (
-            <div className={styles.chartCard}>
-               <div className={styles.chartHeader}><ShipIcon size={18}/> 인기 선박 순위 (TOP 10)</div>
-               <div className={styles.rankList}>
-                 {overallStats.shipRank.map((s:any, i:number) => {
-                   const maxVisits = overallStats.shipRank[0]?.visits || 1;
-                   return (
-                   <div className={styles.rankItem} key={i}>
-                     <div className={styles.rankMedal}>{i+1}</div>
-                     <div className={styles.rankInfo}>
-                        <div className={styles.rankTitle}>
-                           {s.name} <span className={styles.rankNum}>{s.visits}회 방문</span>
-                        </div>
-                        <div className={styles.progressTrack}>
-                           <div className={styles.progressFill} style={{width: `${Math.max((s.visits/maxVisits)*100, 2)}%`, background: '#238299'}}></div>
-                        </div>
+          <div style={{ display: 'grid', gridTemplateColumns: isGlobal ? '1fr 1fr' : '1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+            {isGlobal && overallStats.shipFavoriteRank && (
+              <div className={styles.chartCard} style={{ borderTop: '4px solid #ff4d4d' }}>
+                 <div className={styles.chartHeader}><Heart size={18} fill="#ff4d4d" color="#ff4d4d"/> 즐겨찾기 인기 순위 (TOP 10)</div>
+                 <div className={styles.rankList}>
+                   {overallStats.shipFavoriteRank.map((s:any, i:number) => {
+                     const maxFavs = overallStats.shipFavoriteRank[0]?.favorites || 1;
+                     return (
+                     <div className={styles.rankItem} key={i}>
+                       <div className={styles.rankMedal} style={{ background: i < 3 ? '#ff4d4d' : '#94a3b8' }}>{i+1}</div>
+                       <div className={styles.rankInfo}>
+                          <div className={styles.rankTitle}>
+                             {s.name} <span className={styles.rankNum} style={{color: '#ff4d4d'}}>{s.favorites}명 찜</span>
+                          </div>
+                          <div className={styles.progressTrack}>
+                             <div className={styles.progressFill} style={{width: `${Math.max((s.favorites/maxFavs)*100, 2)}%`, background: '#ff4d4d'}}></div>
+                          </div>
+                       </div>
                      </div>
-                   </div>
-                 )})}
-               </div>
-            </div>
-          )}
+                   )})}
+                   {overallStats.shipFavoriteRank.length === 0 && <p style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>아직 즐겨찾기 데이터가 없습니다.</p>}
+                 </div>
+              </div>
+            )}
+
+            {isGlobal && overallStats.shipRank && (
+              <div className={styles.chartCard}>
+                 <div className={styles.chartHeader}><ShipIcon size={18}/> 방문자 많은 선박 순위 (TOP 10)</div>
+                 <div className={styles.rankList}>
+                   {overallStats.shipRank.map((s:any, i:number) => {
+                     const maxVisits = overallStats.shipRank[0]?.visits || 1;
+                     return (
+                     <div className={styles.rankItem} key={i}>
+                       <div className={styles.rankMedal}>{i+1}</div>
+                       <div className={styles.rankInfo}>
+                          <div className={styles.rankTitle}>
+                             {s.name} <span className={styles.rankNum}>{s.visits}회 방문</span>
+                          </div>
+                          <div className={styles.progressTrack}>
+                             <div className={styles.progressFill} style={{width: `${Math.max((s.visits/maxVisits)*100, 2)}%`, background: '#238299'}}></div>
+                          </div>
+                       </div>
+                     </div>
+                   )})}
+                 </div>
+              </div>
+            )}
+          </div>
 
           <div className={styles.chartCard}>
              <div className={styles.chartHeader}><BarChart2 size={18} style={{transform:'rotate(90deg)'}}/> {isGlobal ? '전체 선박' : ship.name} 링크 클릭 순위 <span style={{marginLeft:'auto', fontSize:'0.8rem', color:'#94a3b8', fontWeight:'normal'}}>총 {overallStats.totalClicks}회</span></div>

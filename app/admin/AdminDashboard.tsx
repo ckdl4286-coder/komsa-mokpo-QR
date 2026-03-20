@@ -77,6 +77,14 @@ export default function AdminDashboard({ ships, config, allClickEvents, urlOrigi
     const totalClicks = rank.reduce((acc, r) => acc + r.clicks, 0);
     const maxClick = rank.length > 0 ? rank[0].clicks : 1;
 
+    // Favorited Statistics
+    const totalFavorites = shipList.reduce((acc, s) => acc + (s.favoriteCount || 0), 0);
+    const shipFavoriteRank = shipList
+      .map(s => ({ name: s.name, favorites: s.favoriteCount || 0 }))
+      .filter(s => s.favorites > 0)
+      .sort((a, b) => b.favorites - a.favorites)
+      .slice(0, 10);
+
     // Ship Activity Rank (only for global)
     const shipRank = shipList.map(s => ({ name: s.name, visits: s.visits.length }))
       .sort((a,b) => b.visits - a.visits)
@@ -84,7 +92,7 @@ export default function AdminDashboard({ ships, config, allClickEvents, urlOrigi
 
     return {
       today: todayCount, yesterday: yesterdayCount, week: weekCount, total: totalAccumulated, maxVisit,
-      chart, totalClicks, maxClick, rank, shipRank
+      chart, totalClicks, maxClick, rank, shipRank, totalFavorites, shipFavoriteRank
     };
   };
 
