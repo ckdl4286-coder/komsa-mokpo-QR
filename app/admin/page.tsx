@@ -2,7 +2,7 @@ import { prisma } from '../lib/db';
 import styles from './admin.module.css';
 import AdminDashboard from './AdminDashboard';
 import { login, logout } from './actions';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { LogOut, ShieldCheck, Settings } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -47,7 +47,10 @@ export default async function AdminPage() {
     dbError = e.message || '데이터베이스 연결에 실패했습니다.';
   }
   
-  const urlOrigin = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const headersList = await headers();
+  const host = headersList.get('host');
+  const protocol = host?.includes('localhost') ? 'http' : 'https';
+  const urlOrigin = host ? `${protocol}://${host}` : (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
 
   if (dbError) {
     return (
