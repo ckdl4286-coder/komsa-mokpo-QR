@@ -39,22 +39,15 @@ export function ActionButton({
       target="_blank" 
       rel="noopener noreferrer" 
       onClick={handleClick}
-      className={`glass-card ${styles.actionItem}`}
-      style={{
-         background: primary ? 'var(--ocean-gradient)' : 'var(--surface)',
-         color: primary ? '#ffffff' : 'var(--text-dark)',
-         border: primary ? 'none' : '2px solid var(--surface-border)',
-         opacity: 1,
-         boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
-      }}
+      className={`${styles.actionItem} ${primary ? styles.actionItemPrimary : ''}`}
     >
       <div className={styles.actionItemLeft}>
-        <div className={styles.iconBox} style={{ background: primary ? 'rgba(255,255,255,0.2)' : 'rgba(19, 56, 142, 0.08)', color: primary ? '#fff' : 'var(--primary)'}}>
+        <div className={styles.iconBox}>
           {getIcon()}
         </div>
         <span className={styles.actionTitle}>{title}</span>
       </div>
-      <ChevronRight size={20} style={{ opacity: 0.6 }} />
+      <ChevronRight size={18} style={{ opacity: 0.5, color: '#fff' }} />
     </a>
   );
 }
