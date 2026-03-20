@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import styles from './admin.module.css';
-import { Copy, Link as LinkIcon, BarChart2, Edit2, Trash2, Calendar, User, Users, CalendarDays, Settings, Star, ExternalLink, Activity, Target, PlusCircle, Ship as ShipIcon } from 'lucide-react';
+import { Copy, Link as LinkIcon, BarChart2, Edit2, Trash2, Calendar, User, Users, CalendarDays, Settings, Star, ExternalLink, Activity, Target, PlusCircle, Ship as ShipIcon, ChevronRight } from 'lucide-react';
 import { updateCoreLink, updateWeather, deleteCustomLink, addCustomLink } from './actions';
 
 export default function ShipDashboard({ ship, config, overallStats, urlOrigin, isGlobal = false }: any) {
@@ -21,6 +21,14 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
     setEditing(null);
   };
 
+  const handleSaveWeather = async () => {
+    const formData = new FormData();
+    formData.append('weather', editingVal);
+    await updateWeather(formData);
+    setEditing(null);
+    window.location.reload();
+  };
+
   const activeLinksCnt = isGlobal ? 0 : 2 + (ship.checklistUrl ? 1 : 0) + (ship.regulationsUrl ? 1 : 0) + (ship.safetyInfoUrl ? 1 : 0) + (ship.links?.filter((l:any)=>l.url!=='tracking-only')?.length || 0);
   const totalLinksCnt = isGlobal ? 0 : 5 + (ship.links?.filter((l:any)=>l.url!=='tracking-only')?.length || 0);
 
@@ -31,6 +39,16 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
 
   return (
     <div style={{ animation: 'fadeIn 0.3s' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <button 
+          onClick={ship.onBack || (() => window.location.reload())}
+          className={styles.addBtn}
+          style={{ background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', padding: '0.6rem 1.2rem', borderRadius: '12px', fontWeight: 700 }}
+        >
+          <ChevronRight size={16} style={{ transform: 'rotate(180deg)', marginRight: '0.5rem' }} /> 선박 목록으로 돌아가기
+        </button>
+      </div>
+
       {!isGlobal && (
         <div className={styles.urlCard}>
           <div>
@@ -78,16 +96,36 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
                <div className={`${styles.linkIconBox} ${styles.purple}`}><CalendarDays size={24} /></div>
                <div className={styles.linkInfo}>
                  <h4>내일의 운항예보 (알림 메시지)</h4>
-                 <p>{config?.tomorrowWeather}</p>
-                 <div className={styles.badges}>
-                   <span className={`${styles.badge} ${styles.primary}`}>주요</span>
-                   <span className={`${styles.badge} ${styles.active}`}>활성</span>
-                 </div>
+                 {editing !== 'weather' ? (
+                   <>
+                     <p>{config?.tomorrowWeather || '등록된 알림이 없습니다.'}</p>
+                     <div className={styles.badges}>
+                       <span className={`${styles.badge} ${styles.primary}`}>공통 공지</span>
+                       <span className={`${styles.badge} ${styles.active}`}>전선박 적용</span>
+                     </div>
+                   </>
+                 ) : (
+                   <div className={styles.editInline}>
+                     <textarea 
+                        className={styles.editInput} 
+                        autoFocus 
+                        defaultValue={config?.tomorrowWeather || ''} 
+                        onChange={(e)=>setEditingVal(e.target.value)}
+                        style={{ width: '100%', minHeight: '80px', padding: '0.75rem' }}
+                     />
+                     <div style={{display:'flex', gap:'0.5rem', marginTop: '0.5rem'}}>
+                       <button className={styles.editSave} onClick={handleSaveWeather}>변경 저장</button>
+                       <button className={styles.actionBtn} onClick={()=>setEditing(null)}>취소</button>
+                     </div>
+                   </div>
+                 )}
                </div>
             </div>
-            <div className={styles.actions}>
-               <button className={styles.actionBtn} onClick={() => alert('본 항목은 상단 [관리자 대시보드] 공통 배너에서 텍스트를 수정해 주세요.')}><Edit2 size={14}/> 변경</button>
-            </div>
+            {editing !== 'weather' && (
+              <div className={styles.actions}>
+                 <button className={styles.actionBtn} onClick={() => { setEditing('weather'); setEditingVal(config?.tomorrowWeather||''); }}><Edit2 size={14}/> 메시지 수정</button>
+              </div>
+            )}
           </div>
 
           <div className={styles.sectionHeader}>

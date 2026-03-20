@@ -95,45 +95,46 @@ export default function AdminDashboard({ ships, config, allClickEvents, urlOrigi
       <div className={styles.dashboardLayout}>
         {/* Top Selection Bar */}
         <section className={styles.sidebar}>
-          <div className={styles.sidebarTitle}>
-             <Anchor size={18} color="#238299" /> 관리 센터 (전체 {ships.length}척)
+          <div className={styles.sidebarTitle} style={{ cursor: 'pointer' }} onClick={() => { setSelectedShipId('global'); setIsAddingShip(false); }}>
+             <Anchor size={18} color="#238299" /> 관리 센터 (기본 홈)
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-            <div className={styles.searchBox}>
-              <Search className={styles.searchIcon} size={16} />
-              <input 
-                type="text" 
-                placeholder="선박 명칭 검색..." 
-                className={styles.searchInput}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
             <button 
               className={`${styles.shipItem} ${selectedShipId === 'global' && !isAddingShip ? styles.active : ''}`}
-              style={{ background: (selectedShipId === 'global' && !isAddingShip) ? '#238299' : '#f1f5f9', color: (selectedShipId === 'global' && !isAddingShip) ? 'white' : '#1e293b' }}
+              style={{ padding: '0.75rem 1.25rem', borderRadius: '12px', background: (selectedShipId === 'global' && !isAddingShip) ? '#238299' : '#f1f5f9', color: (selectedShipId === 'global' && !isAddingShip) ? 'white' : '#1e293b' }}
               onClick={() => {
                 setSelectedShipId('global');
                 setIsAddingShip(false);
               }}
             >
               <BarChart3 size={16} />
-              목포센터 종합 통계
+              종합 통계 홈
             </button>
-
+            
             <button 
               className={`${styles.shipItem} ${isAddingShip ? styles.active : ''}`}
-              style={{ background: isAddingShip ? '#238299' : '#e0f2fe', color: isAddingShip ? 'white' : '#0369a1', borderColor: 'transparent' }}
+              style={{ padding: '0.75rem 1.25rem', borderRadius: '12px', background: isAddingShip ? '#238299' : '#e0f2fe', color: isAddingShip ? 'white' : '#0369a1', borderColor: 'transparent' }}
               onClick={() => {
                 setSelectedShipId(null);
                 setIsAddingShip(true);
               }}
             >
               <PlusCircle size={16} />
-              새 선박 등록
+              배 추가 등록
             </button>
+          </div>
+
+          <div className={styles.searchBox} style={{ width: '100%', marginBottom: '1rem' }}>
+            <Search className={styles.searchIcon} size={16} />
+            <input 
+              type="text" 
+              placeholder="찾으시는 선박 명칭..." 
+              className={styles.searchInput}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ width: '100%' }}
+            />
           </div>
 
           <div className={styles.shipList}>
@@ -201,6 +202,7 @@ export default function AdminDashboard({ ships, config, allClickEvents, urlOrigi
                 config={config} 
                 overallStats={selectedStats} 
                 urlOrigin={urlOrigin} 
+                onBack={() => setSelectedShipId('global')}
               />
             </div>
           )}
