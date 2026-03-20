@@ -67,14 +67,14 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
         </div>
       )}
 
-      <div className={styles.tabs}>
+      <div className={styles.tabs} style={{ position: 'sticky', top: '0', zIndex: 10, background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', padding: '0.5rem 0' }}>
         {!isGlobal && (
-          <button className={`${styles.tab} ${tab === 'links' ? styles.active : ''}`} onClick={() => setTab('links')}>
+          <button className={`${styles.tab} ${tab === 'links' ? styles.active : ''}`} onClick={() => { setTab('links'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
             <LinkIcon size={18} /> 링크 관리
           </button>
         )}
-        <button className={`${styles.tab} ${tab === 'stats' ? styles.active : ''}`} onClick={() => setTab('stats')}>
-          <Activity size={18} /> {isGlobal ? '종합 통계 현황' : '방문자 통계'}
+        <button className={`${styles.tab} ${tab === 'stats' ? styles.active : ''}`} onClick={() => { setTab('stats'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+          <Activity size={18} /> {isGlobal ? '종합 통계 현황 (실시간)' : '방문자 통계'}
         </button>
       </div>
 
