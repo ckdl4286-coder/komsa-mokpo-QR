@@ -3,15 +3,23 @@
 import { prisma } from '../lib/db';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export async function login(formData: FormData) {
   const id = formData.get('id');
   const pw = formData.get('password');
   if (id === 'mokpo9594' && pw === 'mokpo9594!') {
     const cookieStore = await cookies();
-    cookieStore.set('admin-auth', 'true', { path: '/' });
+    cookieStore.set('admin-auth', 'true', { 
+      path: '/',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 // 1일 유지
+    });
   }
   revalidatePath('/admin');
+  redirect('/admin');
 }
 
 export async function logout() {
