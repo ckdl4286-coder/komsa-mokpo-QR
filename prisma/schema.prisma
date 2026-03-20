@@ -17,6 +17,7 @@ model Ship {
   checklistUrl   String?
   regulationsUrl String?
   safetyInfoUrl  String?
+  favoriteCount  Int        @default(0)
   links          ShipLink[]
   visits         Visit[]
 }

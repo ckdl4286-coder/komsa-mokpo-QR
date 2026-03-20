@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { prisma } from '../lib/db';
 import styles from './page.module.css';
-import { Tracker, ActionButton } from './ClientInteractions';
+import { Tracker, ActionButton, FavoriteButton } from './ClientInteractions';
 import { BandStatusButton } from './BandStatusButton';
 import { Ship, ShieldCheck, Activity } from 'lucide-react';
 import { fetchShipSchedule, getStatusInfo, formatTime, formatDate } from '../lib/komsa';
@@ -53,6 +53,9 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
               boxShadow: '0 12px 40px rgba(0,0,0,0.5)'
             }}
           />
+          <div style={{ position: 'absolute', top: '-10px', right: '-10px', zIndex: 10 }}>
+            <FavoriteButton shipId={ship.id} />
+          </div>
         </div>
         <h1 className={styles.shipName}>{ship.name}</h1>
         <div className={styles.subTitle}>

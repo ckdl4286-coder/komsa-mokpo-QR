@@ -1,7 +1,5 @@
-'use client';
-
-import { useEffect } from 'react';
-import { ExternalLink, Navigation, Info, Zap, Bus, CalendarClock, ChevronRight, CheckSquare, Anchor } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ExternalLink, Navigation, Info, Zap, Bus, CalendarClock, ChevronRight, CheckSquare, Anchor, Heart } from 'lucide-react';
 import styles from './page.module.css';
 
 export function Tracker({ shipId }: { shipId: string }) {
@@ -9,6 +7,66 @@ export function Tracker({ shipId }: { shipId: string }) {
     fetch('/api/stats/visit', { method: 'POST', body: JSON.stringify({ shipId }), headers: { 'Content-Type': 'application/json' } });
   }, [shipId]);
   return null;
+}
+
+export function FavoriteButton({ shipId }: { shipId: string }) {
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  useEffect(() => {
+    const favorites = JSON.parse(localStorage.getItem('komsa_favorites') || '[]');
+    setIsFavorite(favorites.includes(shipId));
+  }, [shipId]);
+
+  const toggleFavorite = async () => {
+    const favorites = JSON.parse(localStorage.getItem('komsa_favorites') || '[]');
+    let newFavorites;
+    let action: 'add' | 'remove';
+
+    if (isFavorite) {
+      newFavorites = favorites.filter((id: string) => id !== shipId);
+      action = 'remove';
+    } else {
+      newFavorites = [...favorites, shipId];
+      action = 'add';
+    }
+
+    localStorage.setItem('komsa_favorites', JSON.stringify(newFavorites));
+    setIsFavorite(!isFavorite);
+
+    // DB 통계 API 호출
+    try {
+      await fetch('/api/stats/favorite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ shipId, action })
+      });
+    } catch (e) {
+      console.error('[즐겨찾기] 통계 서버 전송 실패:', e);
+    }
+  };
+
+  return (
+    <button 
+      onClick={toggleFavorite}
+      style={{
+        background: 'rgba(255, 255, 255, 0.1)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        borderRadius: '50%',
+        width: '46px',
+        height: '46px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        backdropFilter: 'blur(10px)',
+        color: isFavorite ? '#ff4d4d' : '#fff',
+        boxShadow: isFavorite ? '0 0 20px rgba(255, 77, 77, 0.5)' : 'none'
+      }}
+    >
+      <Heart fill={isFavorite ? '#ff4d4d' : 'none'} size={24} strokeWidth={isFavorite ? 0 : 2} />
+    </button>
+  );
 }
 
 export function ActionButton({ 
