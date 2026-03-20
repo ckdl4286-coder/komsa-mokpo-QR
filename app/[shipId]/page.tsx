@@ -177,7 +177,7 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
             iconName="ShieldCheck" 
           />
 
-          {/* DB 링크 (중복 제외) */}
+          {/* DB 링크 (중복 절대 제외) */}
           {ship.links
             .filter((link: any) => 
                !link.title.includes('PATIS') && 
@@ -185,6 +185,7 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
                !link.title.includes('밴드') &&
                !link.title.includes('VR') &&
                !link.title.includes('어때') &&
+               !link.title.includes('운항정보') &&
                !link.url.includes('band.us') &&
                !link.url.includes('komsa.or.kr/viewer') &&
                !link.url.includes('docs.google.com/forms') 
