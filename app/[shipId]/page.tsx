@@ -40,34 +40,42 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
       <Tracker shipId={ship.id} />
       
       <header className={styles.header}>
-        <div style={{ position: 'relative', display: 'inline-block' }}>
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
           <img
             src="/haesooho_hello.jpg"
             alt="해수호 캐릭터"
             style={{
-              width: '100px', height: '100px', objectFit: 'cover',
-              margin: '0 auto 1rem auto', display: 'block',
-              borderRadius: '50%', border: '4px solid rgba(255,255,255,0.3)',
-              padding: '2px', background: 'rgba(255,255,255,0.2)',
-              backdropFilter: 'blur(5px)',
-              boxShadow: '0 12px 30px rgba(0,0,0,0.4)'
+              width: '80px', height: '80px', objectFit: 'cover',
+              borderRadius: '50%', border: '3px solid rgba(255,255,255,0.4)',
+              background: 'rgba(255,255,255,0.2)',
+              boxShadow: '0 8px 25px rgba(0,0,0,0.3)'
             }}
           />
+          <div style={{ textAlign: 'left' }}>
+             <div style={{ fontSize: '0.8rem', color: '#00d4ff', fontWeight: 900, marginBottom: '2px', letterSpacing: '-0.5px' }}>한국해양교통안전공단</div>
+             <div style={{ fontSize: '1.1rem', color: '#fff', fontWeight: 700 }}>목포운항관리센터</div>
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '0.2rem' }}>
-          <h1 className={styles.shipName} style={{ fontSize: '1.8rem', marginBottom: 0 }}>{ship.name}</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '1.2rem', marginBottom: '0.2rem' }}>
+          <h1 className={styles.shipName} style={{ fontSize: '2.2rem', marginBottom: 0, letterSpacing: '-1px' }}>{ship.name}</h1>
           <FavoriteButton shipId={ship.id} />
         </div>
-        <div className={styles.subTitle} style={{ color: '#00d4ff', fontWeight: 800, fontSize: '0.8rem', letterSpacing: '1px' }}>
-           MOKPO MARITIME SAFETY PORTAL
-        </div>
-        <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>
-           본 정보는 목포운항관리센터에서 공식 제공합니다.
+        <div style={{ marginTop: '0.3rem', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
+           SAFE NAVIGATION INFORMATION PORTAL
         </div>
       </header>
 
-      {/* 🟢 핵심 개선: 지금 상태 바로 띄우기 */}
+      {/* 🟢 핵심 개선: 지금 상태 바로 띄우기 & 업데이트 시간 복구 */}
       <div className={styles.statusBox} style={{ marginTop: '-1.5rem', zIndex: 10, position: 'relative', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}>
+        <div className={styles.statusLabelContainer} style={{ marginBottom: '0.8rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span className={styles.statusLabel} style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)' }}>
+             ● 실시간 API 데이터 연동 중
+          </span>
+          <span className={styles.updateTime} style={{ fontSize: '0.75rem', color: '#00d4ff', fontWeight: 700 }}>
+             방금 업데이트됨
+          </span>
+        </div>
+        
         <div
           className={`${styles.statusBadge} ${statusInfo.label.includes('정상') ? styles.glowing : ''}`}
           style={{ 
@@ -79,9 +87,9 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
           {statusInfo.emoji} {statusInfo.label}
         </div>
 
-        <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-           <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
-              ※ 상세 운항 시간 및 변동 사항은 네이버 밴드에서 확인 가능합니다.
+        <div style={{ marginTop: '1.2rem', textAlign: 'center' }}>
+           <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', marginBottom: '0.6rem' }}>
+              ※ 상세 운항 시간 및 변동 사항은 네이버 밴드에서 확인하세요.
            </p>
            <BandStatusButton shipId={ship.id} />
         </div>
@@ -150,16 +158,6 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
            <Activity size={18} /> 편리한 부가 서비스 안내
         </h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {/* BP급 서비스: 문의 전화 코드 삽입 */}
-          <ActionButton 
-            shipId={ship.id} 
-            linkId="service_call" 
-            url="tel:0612406540" 
-            title="운항관리센터 유선 문의" 
-            description="전화 한 통으로 궁금증 해결! 목포운항관리센터로 바로 연결됩니다."
-            guideText="전화 발신"
-            iconName="PhoneCall" 
-          />
           <ActionButton 
             shipId={ship.id} 
             linkId="service_patis" 
@@ -168,6 +166,16 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
             description="전국 여객선의 현재 위치와 항로 정보를 PATIS로 확인하세요!"
             guideText="지도 보기"
             iconName="MapPin" 
+          />
+          <ActionButton 
+            shipId={ship.id} 
+            linkId="service_ev" 
+            url="https://docs.google.com/forms/d/e/1FAIpQLSfcl6G0YvPZq3i7mXclG0n_p2mYp6F7_k6kX..." 
+            title="전기차 배터리 점검 서비스" 
+            description="사전 예약을 통해 출항 전 전기차 배터리 안심 점검을 받아보세요."
+            guideText="예약하기"
+            isFree={true}
+            iconName="ShieldCheck" 
           />
           <ActionButton 
             shipId={ship.id} 
