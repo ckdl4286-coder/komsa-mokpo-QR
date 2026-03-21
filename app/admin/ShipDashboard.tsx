@@ -188,16 +188,21 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
                   <button 
                     className={styles.actionBtn} 
                      onClick={async () => {
-                        const t = prompt('변경할 제목:', l.title);
-                        const u = prompt('변경할 주소(URL):', l.url);
-                        if (t !== null && u !== null && (t !== l.title || u !== l.url)) {
+                        const input = prompt('제목과 주소를 [제목@주소] 형식으로 입력하세요.\n예시: 안전정보@https://naver.com', `${l.title}@${l.url}`);
+                        if (input && input.includes('@')) {
+                           const [newTitle, newUrl] = input.split('@');
                            try {
-                              await updateCustomLink(l.id, t, u);
+                              if (!newTitle || !newUrl) throw new Error('입력 형식이 잘못되었습니다.');
+                              console.log('Update starting...', { newTitle, newUrl });
+                              await updateCustomLink(l.id, newTitle, newUrl);
+                              alert('수정 완료!');
                               window.location.reload();
                            } catch (err) {
-                              alert('수정에 실패했습니다. 다시 시도해 주세요.');
+                              alert('수정 중 서버 에러 발생: ' + (err as Error).message);
                               console.error(err);
                            }
+                        } else if (input) {
+                           alert('입력 시 중간에 @ 문자를 넣어주세요!');
                         }
                      }} 
                     style={{ 
