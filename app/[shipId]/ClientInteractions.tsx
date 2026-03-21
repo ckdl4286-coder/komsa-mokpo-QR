@@ -180,13 +180,16 @@ export function ActionButton({
   guideText?: string;
   isFree?: boolean;
 }) {
-  const handleClick = () => {
-    if (url) {
-      fetch('/api/stats/click', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ shipId, linkId, title }) });
-    }
-  };
+  const [showPopup, setShowPopup] = useState(false);
 
-  if (!url || url === 'tracking-only') return null;
+  const handleClick = (e: React.MouseEvent) => {
+    if (!url || url === 'tracking-only') {
+      e.preventDefault();
+      setShowPopup(true);
+      return;
+    }
+    fetch('/api/stats/click', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ shipId, linkId, title }) });
+  };
 
   const getIcon = () => {
     if(iconName === 'CheckSquare') return <CheckSquare size={22} />;
@@ -197,37 +200,79 @@ export function ActionButton({
   };
 
   return (
-    <a 
-      href={url || '#'} 
-      target="_blank" 
-      rel="noopener noreferrer" 
-      onClick={handleClick}
-      className={`${styles.actionItem} ${primary ? styles.actionItemPrimary : ''}`}
-      style={{ flexDirection: 'column', alignItems: 'flex-start', padding: description ? '1.4rem' : '1.1rem 1.25rem' }}
-    >
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: description ? '0.6rem' : '0' }}>
-        <div className={styles.actionItemLeft}>
-          <div className={styles.iconBox}>
-            {getIcon()}
+    <>
+      <a 
+        href={url && url !== 'tracking-only' ? url : '#'} 
+        target={url && url !== 'tracking-only' ? "_blank" : undefined}
+        rel="noopener noreferrer" 
+        onClick={handleClick}
+        className={`${styles.actionItem} ${primary ? styles.actionItemPrimary : ''}`}
+        style={{ flexDirection: 'column', alignItems: 'flex-start', padding: description ? '1.4rem' : '1.1rem 1.25rem' }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: description ? '0.6rem' : '0' }}>
+          <div className={styles.actionItemLeft}>
+            <div className={styles.iconBox}>
+              {getIcon()}
+            </div>
+            <span className={styles.actionTitle}>{title}</span>
           </div>
-          <span className={styles.actionTitle}>{title}</span>
+          {guideText && (
+            <span className={styles.actionGuide}>
+              {guideText} <ChevronRight size={14} />
+            </span>
+          )}
         </div>
-        {guideText && (
-          <span className={styles.actionGuide}>
-            {guideText} <ChevronRight size={14} />
+        
+        {description && (
+          <span className={styles.actionDesc}>
+            {description}
           </span>
         )}
-      </div>
-      
-      {description && (
-        <span className={styles.actionDesc}>
-          {description}
-        </span>
+        {isFree && (
+          <span className={styles.freeBadge}>무료</span>
+        )}
+        {!guideText && !description && <ChevronRight size={18} style={{ position: 'absolute', right: '1.25rem', opacity: 0.5, color: '#fff' }} />}
+      </a>
+
+      {showPopup && (
+        <div 
+          onClick={(e) => { e.preventDefault(); setShowPopup(false); }}
+          style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.6)', zIndex: 9999, display: 'flex',
+            alignItems: 'center', justifyContent: 'center',
+            backdropFilter: 'blur(8px)', padding: '1.5rem'
+          }}
+        >
+          <div 
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: 'linear-gradient(145deg, #1e293b 0%, #0f172a 100%)',
+              borderRadius: '24px', padding: '2.5rem 1.5rem', maxWidth: '340px', width: '100%',
+              border: '1px solid rgba(255,255,255,0.15)', boxShadow: '0 25px 50px rgba(0,0,0,0.5)',
+              textAlign: 'center', animation: 'fadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1)'
+            }}
+          >
+            <div style={{ fontSize: '3.5rem', marginBottom: '1rem', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.3))' }}>🚧</div>
+            <h3 style={{ color: '#fff', fontSize: '1.3rem', fontWeight: 800, marginBottom: '1rem', letterSpacing: '-0.5px' }}>서비스 안내</h3>
+            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '2rem', wordBreak: 'keep-all' }}>
+              해당 선박의 <b>{title}</b> 정보가 아직 등록되지 않았거나, 시스템 연결 오류를 <b>해결 중</b>입니다.<br/><br/>
+              최대한 빠르게 안전 정보를 확인하실 수 있도록 조치하겠습니다.
+            </p>
+            <button
+              onClick={() => setShowPopup(false)}
+              style={{
+                width: '100%', padding: '1rem', borderRadius: '14px',
+                background: 'linear-gradient(135deg, #00d4ff, #0077ff)', color: '#fff', fontWeight: 800,
+                border: 'none', cursor: 'pointer', fontSize: '1.05rem',
+                boxShadow: '0 8px 20px rgba(0, 212, 255, 0.3)'
+              }}
+            >
+              확인
+            </button>
+          </div>
+        </div>
       )}
-      {isFree && (
-        <span className={styles.freeBadge}>무료</span>
-      )}
-      {!guideText && !description && <ChevronRight size={18} style={{ position: 'absolute', right: '1.25rem', opacity: 0.5, color: '#fff' }} />}
-    </a>
+    </>
   );
 }
