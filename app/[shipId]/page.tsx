@@ -3,14 +3,13 @@ import { prisma } from '../lib/db';
 import styles from './page.module.css';
 import { Tracker, ActionButton, FavoriteButton } from './ClientInteractions';
 import { BandStatusButton } from './BandStatusButton';
-import { Ship, ShieldCheck, Activity } from 'lucide-react';
-import { fetchShipSchedule, getStatusInfo, formatTime, formatDate } from '../lib/komsa';
+import { ShieldCheck, Activity, MapPin, Zap, CheckSquare, Navigation, ShieldAlert } from 'lucide-react';
+import { fetchShipSchedule, getStatusInfo, formatTime } from '../lib/komsa';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0; // 캐시 즉시 무효화
 
-// [Build Version: 2026.03.21.0918] - UI 및 레이아웃 강제 갱신용 주석
-
+// [Build Version: 2026.03.21.0925] - UI/UX 완벽 갱신용
 export default async function ShipPage({ params }: { params: Promise<{ shipId: string }> }) {
   const { shipId } = await params;
   const decodedSlug = decodeURIComponent(shipId);
@@ -23,7 +22,7 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
 
   const config = await prisma.systemConfig.findUnique({ where: { id: 'global' } });
 
-  // KOMSA API로 내일 운항 일정 조회
+  // KOMSA API로 운항 일정 조회
   let schedules = null;
   try {
     schedules = await fetchShipSchedule(ship.name);
@@ -31,12 +30,8 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
     console.error('[선박 페이지] 운항 일정 조회 실패:', e);
   }
 
-  // 대표 운항 상태 (첫 번째 스케줄 기준)
   const mainSchedule = schedules?.[0] ?? null;
   const statusInfo = getStatusInfo(mainSchedule);
-
-  // 관리자가 입력한 날씨 메시지 (API 대체 or 보완용)
-  const adminWeather = config?.tomorrowWeather;
 
   return (
     <div className={styles.container}>
@@ -99,10 +94,9 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
           </p>
         )}
 
-        {/* 운항 스케줄 상세 */}
         {schedules && schedules.length > 0 && (
           <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.85)', marginTop: '1rem', padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)' }}>
-            {schedules.slice(0, 3).map((s, i) => (
+            {schedules.slice(0, 3).map((s:any, i:number) => (
               <div key={i} style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center', marginBottom: '0.3rem' }}>
                 <span style={{ fontWeight: 800 }}>🕐 {formatTime(s.sail_tm)}</span>
                 <span style={{ opacity: 0.4 }}>|</span>
@@ -194,7 +188,6 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
                !link.title.includes('밴드') &&
                !link.title.includes('VR') &&
                !link.title.includes('어때') &&
-               !link.title.includes('운항정보') &&
                !link.url.includes('band.us') &&
                !link.url.includes('komsa.or.kr/viewer') &&
                !link.url.includes('docs.google.com/forms') 
@@ -206,7 +199,7 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
               linkId={link.id} 
               url={link.url} 
               title={link.title} 
-              description={link.title.includes('VR') ? '가상현실로 만나는 여객선 안전 교육' : '여객선을 위한 편리한 부가 서비스를 이용해보세요!'}
+              description={link.title.includes('VR') ? '가상현실로 보는 여객선 안전 교육' : '편리한 부가 서비스를 이용해보세요!'}
               iconName={link.icon || 'ExternalLink'} 
             />
           ))}
