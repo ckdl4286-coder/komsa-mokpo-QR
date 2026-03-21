@@ -27,8 +27,15 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
   const yyyy = today.getFullYear();
   const mm = String(today.getMonth() + 1).padStart(2, '0');
   const dd = String(today.getDate()).padStart(2, '0');
+  const dayOfWeek = today.getDay(); // 0: 일, 6: 토
   const dayName = today.toLocaleDateString('ko-KR', { weekday: 'short' });
-  const displayDate = `${formatDate(`${yyyy}${mm}${dd}`)} (${dayName})`;
+  const dayColor = dayOfWeek === 0 ? '#ff5252' : (dayOfWeek === 6 ? '#52a2ff' : '#fff');
+  
+  const displayDate = (
+    <>
+      {formatDate(`${yyyy}${mm}${dd}`)} <span style={{ color: dayColor, fontWeight: 900 }}>({dayName})</span>
+    </>
+  );
 
   // KOMSA API로 운항 일정 조회
   let schedules = null;
@@ -47,31 +54,31 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
       
       <header className={styles.header} style={{ 
         display: 'flex', flexDirection: 'column', alignItems: 'center', 
-        paddingTop: '0.5rem', paddingBottom: '0.2rem', gap: '0.2rem' 
+        paddingTop: '1.2rem', paddingBottom: '0.4rem', gap: '0.4rem' 
       }}>
         {/* 🏛️ 최상단: 공단 공식 로고만 깔끔하게 하나! (높이 최소화) */}
-        <div style={{ marginBottom: '0.3rem' }}>
+        <div style={{ marginBottom: '0.4rem' }}>
           <img
             src="/komsa_official_logo.png"
             alt="공단 로고"
-            style={{ width: '130px', height: 'auto', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.15))' }}
+            style={{ width: '135px', height: 'auto', filter: 'drop-shadow(0 6px 10px rgba(0,0,0,0.2))' }}
           />
         </div>
 
         {/* 🚢 선박 이름 (상단으로 더 밀착) */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          <h1 className={styles.shipName} style={{ fontSize: '2.0rem', marginBottom: 0 }}>{ship.name}</h1>
+          <h1 className={styles.shipName} style={{ fontSize: '2.1rem', marginBottom: 0, letterSpacing: '-0.5px' }}>{ship.name}</h1>
           <FavoriteButton shipId={ship.id} />
         </div>
       </header>
 
       <div className={styles.statusBox} style={{ padding: '0.8rem 1rem', marginBottom: '1.2rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: '4px' }}>
-            <span style={{ fontSize: '0.7rem', color: '#00d4ff', fontWeight: 800, opacity: 0.9 }}>
-               ● 실시간 데이터 연동 중 
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: '6px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '4px' }}>
+            <span style={{ fontSize: '0.75rem', color: '#00d4ff', fontWeight: 900, textShadow: '0 0 10px rgba(0,212,255,0.3)' }}>
+               ● 실시간 연동 중 
             </span>
-            <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.6)', fontWeight: 700 }}>
                방금 업데이트됨
             </span>
           </div>
@@ -79,10 +86,10 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
           {/* 📅 날짜와 🚢 상태를 한 줄로 결합! */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'nowrap', width: '100%' }}>
             <div style={{ 
-              fontSize: '0.9rem', color: '#00d4ff', fontWeight: 900, 
-              letterSpacing: '-0.5px', background: 'rgba(0,212,255,0.08)',
-              padding: '6px 12px', borderRadius: '12px', border: '1px solid rgba(0,212,255,0.15)',
-              display: 'flex', alignItems: 'center', gap: '5px'
+              fontSize: '1rem', color: '#fff', fontWeight: 900, 
+              letterSpacing: '-0.5px', background: 'rgba(255,255,255,0.05)',
+              padding: '6px 12px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)',
+              display: 'flex', alignItems: 'center', gap: '6px'
             }}>
               📅 {displayDate}
             </div>
@@ -90,8 +97,9 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
             <div className="glowing" style={{ 
               background: statusInfo.color, color: '#fff', 
               padding: '6px 16px', borderRadius: '12px', fontWeight: 900, 
-              fontSize: '1.2rem', boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-              display: 'flex', alignItems: 'center', gap: '6px'
+              fontSize: '1.2rem', boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+              display: 'flex', alignItems: 'center', gap: '6px',
+              textShadow: '0 1px 2px rgba(0,0,0,0.2)'
             }}>
               {statusInfo.emoji} {statusInfo.label}
             </div>
