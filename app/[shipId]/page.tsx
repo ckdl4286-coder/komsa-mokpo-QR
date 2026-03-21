@@ -72,13 +72,10 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
             }}
           />
 
-          {/* 3. 목포운항관리센터 (텍스트 다이어트) */}
+          {/* 3. 목포운항관리센터 (영문 제거하여 더 깔끔하게!) */}
           <div style={{ textAlign: 'left', lineHeight: '1.1' }}>
-            <div style={{ fontSize: '1.05rem', color: '#fff', fontWeight: 900, textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
+            <div style={{ fontSize: '1.2rem', color: '#fff', fontWeight: 900, textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
                목포운항관리센터
-            </div>
-            <div style={{ fontSize: '0.65rem', color: '#00d4ff', fontWeight: 800, letterSpacing: '0.5px', opacity: 0.9 }}>
-               MOKPO SAFETY STATION
             </div>
           </div>
         </div>
