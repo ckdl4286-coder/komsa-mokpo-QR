@@ -136,23 +136,26 @@
 }
 
 .actionTitle {
-  font-size: 1.15rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
+  font-size: 1.1rem;
+  font-weight: 850;
+  letter-spacing: -0.7px;
   color: #ffffff;
   margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .actionDesc {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.45);
   font-weight: 500;
   line-height: 1.4;
+  word-break: keep-all;
 }
 
 .actionGuide {
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: 0.78rem;
+  font-weight: 800;
   color: #00d4ff;
   display: flex;
   align-items: center;
@@ -160,6 +163,9 @@
   background: rgba(0, 212, 255, 0.1);
   padding: 4px 10px;
   border-radius: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: -0.5px;
 }
 
 /* 💥 애니메이션 효과 강화 */
