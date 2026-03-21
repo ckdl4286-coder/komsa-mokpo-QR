@@ -67,15 +67,24 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
 
       <div className={styles.statusBox} style={{ padding: '0.8rem 1rem', marginBottom: '1.2rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {/* 📅 날짜와 🚢 상태를 한 줄로 결합! (헤더처럼 웅장하게) */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: '4px' }}>
+            <span style={{ fontSize: '0.7rem', color: '#00d4ff', fontWeight: 800, opacity: 0.9 }}>
+               ● 실시간 데이터 연동 중 
+            </span>
+            <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>
+               방금 업데이트됨
+            </span>
+          </div>
+          
+          {/* 📅 날짜와 🚢 상태를 한 줄로 결합! */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'nowrap', width: '100%' }}>
             <div style={{ 
-              fontSize: '0.95rem', color: '#00d4ff', fontWeight: 900, 
+              fontSize: '0.9rem', color: '#00d4ff', fontWeight: 900, 
               letterSpacing: '-0.5px', background: 'rgba(0,212,255,0.08)',
               padding: '6px 12px', borderRadius: '12px', border: '1px solid rgba(0,212,255,0.15)',
               display: 'flex', alignItems: 'center', gap: '5px'
             }}>
-              📅 {displayDate} 기준
+              📅 {displayDate}
             </div>
             
             <div className="glowing" style={{ 
