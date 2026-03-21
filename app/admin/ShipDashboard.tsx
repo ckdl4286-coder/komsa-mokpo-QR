@@ -190,9 +190,14 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
                      onClick={async () => {
                         const t = prompt('변경할 제목:', l.title);
                         const u = prompt('변경할 주소(URL):', l.url);
-                        if (t && u) {
-                           await updateCustomLink(l.id, t, u);
-                           window.location.reload();
+                        if (t !== null && u !== null && (t !== l.title || u !== l.url)) {
+                           try {
+                              await updateCustomLink(l.id, t, u);
+                              window.location.reload();
+                           } catch (err) {
+                              alert('수정에 실패했습니다. 다시 시도해 주세요.');
+                              console.error(err);
+                           }
                         }
                      }} 
                     style={{ 
