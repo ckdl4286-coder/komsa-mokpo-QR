@@ -81,19 +81,7 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
           {statusInfo.emoji} {statusInfo.label}
         </div>
 
-        <div style={{ marginTop: '1.5rem' }}>
-           <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', marginBottom: '0.8rem', textAlign: 'center' }}>
-              ※ 상세 운항 시간 및 변동 사항 확인 (밴드)
-           </p>
-           <BandStatusButton shipId={ship.id} />
-        </div>
-
-        {statusInfo.reason && (
-          <p className={styles.statusDesc} style={{ color: '#ff4d4d', fontWeight: 800, marginTop: '1rem', border: '2px dashed #ff4d4d', padding: '0.5rem', borderRadius: '8px' }}>
-            사유: {statusInfo.reason}
-          </p>
-        )}
-
+        {/* 출항 시간 및 항로 - 배지 바로 아래 표시 */}
         {schedules && schedules.length > 0 && (
           <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.85)', marginTop: '1rem', padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)' }}>
             {schedules.slice(0, 3).map((s:any, i:number) => (
@@ -105,6 +93,19 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
             ))}
           </div>
         )}
+
+        {statusInfo.reason && (
+          <p className={styles.statusDesc} style={{ color: '#ff4d4d', fontWeight: 800, marginTop: '1rem', border: '2px dashed #ff4d4d', padding: '0.5rem', borderRadius: '8px' }}>
+            사유: {statusInfo.reason}
+          </p>
+        )}
+
+        <div style={{ marginTop: '1.2rem' }}>
+           <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', marginBottom: '0.8rem', textAlign: 'center' }}>
+              ※ 상세 운항 시간 및 변동 사항 확인 (밴드)
+           </p>
+           <BandStatusButton shipId={ship.id} />
+        </div>
       </div>
 
       <section className={styles.section}>
@@ -162,6 +163,15 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
           />
           <ActionButton 
             shipId={ship.id} 
+            linkId="service_vr" 
+            url="https://www.youtube.com/playlist?list=PLtY6qP5v0cW97FjE2m9r1_Z6X_eX..." 
+            title="생생한 여객선 VR 체험" 
+            description="가상현실로 체험하는 여객선 안전 교육 콘텐츠를 시청하세요."
+            guideText="체험하기"
+            iconName="Zap" 
+          />
+          <ActionButton 
+            shipId={ship.id} 
             linkId="service_ev" 
             url="https://docs.google.com/forms/d/e/1FAIpQLSfcl6G0YvPZq3i7mXclG0n_p2mYp6F7_k6kX..." 
             title="전기차 배터리 점검 서비스" 
@@ -169,15 +179,6 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
             guideText="예약하기"
             isFree={true}
             iconName="ShieldCheck" 
-          />
-          <ActionButton 
-            shipId={ship.id} 
-            linkId="service_vr" 
-            url="https://www.youtube.com/playlist?list=PLtY6qP5v0cW97FjE2m9r1_Z6X_eX..." 
-            title="생생한 여객선 VR 체험" 
-            description="가상현실로 체험하는 여객선 안전 교육 콘텐츠를 시청하세요."
-            guideText="체험하기"
-            iconName="Zap" 
           />
 
           {/* DB 링크 (중복 절대 제외) */}
