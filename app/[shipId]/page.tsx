@@ -88,21 +88,15 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
             </div>
           </div>
 
-          {/* 🕐 출항 시간 (심플하게 옆으로) */}
+          {/* 🕐 운항 정보 리스트 - 세로형 복구 (가독성 증대) */}
           {schedules && schedules.length > 0 && (
-            <div style={{ 
-              fontSize: '1rem', color: 'rgba(255,255,255,0.95)', 
-              padding: '0.8rem', background: 'rgba(255,255,255,0.03)', 
-              borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)',
-              textAlign: 'center'
-            }}>
-              <span style={{ fontWeight: 900, color: '#00D4FF', marginRight: '8px' }}>🕐 주요 운항시각</span>
-              {schedules.slice(0, 2).map((s:any, i:number) => (
-                <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', marginRight: '10px' }}>
-                  <b style={{ fontSize: '1.1rem' }}>{formatTime(s.sail_tm)}</b>
-                  <small style={{ opacity: 0.6, fontSize: '0.75rem' }}>({s.dest_nm})</small>
-                  {i < Math.min(schedules.length, 2) - 1 && <span style={{ opacity: 0.2, marginLeft: '8px' }}>|</span>}
-                </span>
+            <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.85)', marginTop: '0.5rem', padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)' }}>
+              {schedules.slice(0, 3).map((s:any, i:number) => (
+                <div key={i} style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center', marginBottom: '0.4rem' }}>
+                  <span style={{ fontWeight: 800 }}>🕐 {formatTime(s.sail_tm)}</span>
+                  <span style={{ opacity: 0.4 }}>|</span>
+                  <span style={{ fontWeight: 500 }}>{s.oport_nm} ➔ {s.dest_nm}</span>
+                </div>
               ))}
             </div>
           )}
