@@ -186,6 +186,21 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
               const isCommonLink = ['운항관리규정', '안전정보', '점검표', '유선문의'].some(k => title.includes(k));
               return !isCommonLink;
             })
+            .sort((a: any, b: any) => {
+              const tA = (a.title || '').toLowerCase();
+              const tB = (b.title || '').toLowerCase();
+              // PATIS/위치가 들어간 것을 1등으로 (음수 값이 나오면 앞으로 감)
+              const pA = tA.includes('patis') || tA.includes('위치');
+              const pB = tB.includes('patis') || tB.includes('위치');
+              if (pA && !pB) return -1;
+              if (!pA && pB) return 1;
+              // 그 다음 VR이 2등
+              const vA = tA.includes('vr');
+              const vB = tB.includes('vr');
+              if (vA && !vB) return -1;
+              if (!vA && vB) return 1;
+              return 0;
+            })
             .map((link: any) => {
               let desc = '여객선 이용을 위한 편리한 부가 서비스입니다.';
               let guideText = '바로가기';

@@ -185,6 +185,20 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
                   </div>
                </div>
                <div className={styles.actions}>
+                  <button 
+                    className={styles.actionBtn} 
+                    onClick={() => {
+                      const t = prompt('새로운 제목:', l.title);
+                      const u = prompt('새로운 URL:', l.url);
+                      if (t && u) {
+                        // @ts-ignore
+                        import('./actions').then(m => m.updateCustomLink(l.id, t, u));
+                      }
+                    }} 
+                    style={{ marginRight: '0.5rem', color: '#0ea5e9' }}
+                  >
+                    <Edit2 size={14}/> 수정
+                  </button>
                   <button className={`${styles.actionBtn} ${styles.danger}`} onClick={()=>setDeleteConfirmLink(l)}><Trash2 size={14}/> 삭제</button>
                </div>
              </div>

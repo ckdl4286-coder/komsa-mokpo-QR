@@ -80,3 +80,11 @@ export async function updateShipInfo(shipId: string, data: any) {
   });
   revalidatePath('/admin');
 }
+
+export async function updateCustomLink(id: string, title: string, url: string) {
+  await prisma.shipLink.update({
+    where: { id },
+    data: { title, url }
+  });
+  revalidatePath('/admin');
+}
