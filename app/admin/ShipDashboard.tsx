@@ -176,7 +176,7 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
           </div>
 
           {ship.links?.filter((l:any)=>l.url!=='tracking-only').map((l:any) => {
-            const isEditing = editing === l.id;
+            const isEditing = String(editing) === String(l.id);
             return (
               <div className={styles.linkCard} key={l.id}>
                 <div className={styles.linkLeft}>
