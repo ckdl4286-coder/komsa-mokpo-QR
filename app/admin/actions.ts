@@ -87,4 +87,5 @@ export async function updateCustomLink(id: string, title: string, url: string) {
     data: { title, url }
   });
   revalidatePath('/admin');
+  revalidatePath('/');
 }

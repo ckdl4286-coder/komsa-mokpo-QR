@@ -187,11 +187,12 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
                <div className={styles.actions} style={{ display: 'flex', gap: '0.6rem', padding: '0.4rem 0' }}>
                   <button 
                     className={styles.actionBtn} 
-                     onClick={() => {
+                     onClick={async () => {
                         const t = prompt('변경할 제목:', l.title);
                         const u = prompt('변경할 주소(URL):', l.url);
                         if (t && u) {
-                           updateCustomLink(l.id, t, u);
+                           await updateCustomLink(l.id, t, u);
+                           window.location.reload();
                         }
                      }} 
                     style={{ 
