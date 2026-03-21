@@ -4,24 +4,24 @@
   max-width: 500px;
   margin: 0 auto;
   min-height: 100vh;
-  /* 🌊 프리미엄 심해 그라데이션 */
-  background: linear-gradient(160deg, #001f3f 0%, #000428 50%, #050505 100%);
+  /* 🌊 청명하고 깊은 블루 그라데이션 (톤업) */
+  background: linear-gradient(165deg, #003366 0%, #001f3f 40%, #001025 100%);
   color: #ffffff;
   position: relative;
   overflow: hidden;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* 🌟 프리미엄 앰비언트 라이트 (몽환적인 빛무리) */
+/* 🌟 화사한 앰비언트 라이트 (조명 강화) */
 .container::before {
   content: '';
   position: absolute;
-  top: -5%;
-  left: -10%;
-  width: 250px;
-  height: 250px;
-  background: radial-gradient(circle, rgba(0, 212, 255, 0.2) 0%, transparent 70%);
-  filter: blur(50px);
+  top: -10%;
+  left: -20%;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.25) 0%, transparent 75%);
+  filter: blur(60px);
   z-index: 0;
   pointer-events: none;
 }
@@ -29,12 +29,12 @@
 .container::after {
   content: '';
   position: absolute;
-  bottom: 20%;
-  right: -5%;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(0, 78, 146, 0.2) 0%, transparent 70%);
-  filter: blur(40px);
+  bottom: 0%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(0, 78, 146, 0.3) 0%, transparent 80%);
+  filter: blur(50px);
   z-index: 0;
   pointer-events: none;
 }
