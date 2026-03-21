@@ -13,10 +13,13 @@ export function Tracker({ shipId }: { shipId: string }) {
 
 export function FavoriteButton({ shipId, shipName }: { shipId: string; shipName?: string }) {
   const [isFavorite, setIsFavorite] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
     const favorites = JSON.parse(localStorage.getItem('komsa_favorites') || '[]');
     setIsFavorite(favorites.includes(shipId));
+    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent));
   }, [shipId]);
 
   const toggleFavorite = async () => {
@@ -27,9 +30,11 @@ export function FavoriteButton({ shipId, shipName }: { shipId: string; shipName?
     if (isFavorite) {
       newFavorites = favorites.filter((id: string) => id !== shipId);
       action = 'remove';
+      setShowGuide(false);
     } else {
       newFavorites = [...favorites, shipId];
       action = 'add';
+      setShowGuide(true);
     }
 
     localStorage.setItem('komsa_favorites', JSON.stringify(newFavorites));
@@ -74,6 +79,83 @@ export function FavoriteButton({ shipId, shipName }: { shipId: string; shipName?
           style={{ filter: isFavorite ? 'drop-shadow(0 0 5px rgba(255, 77, 77, 0.8))' : 'none' }}
         />
       </button>
+
+      {/* 어르신을 위한 쉬운 안내 팝업 */}
+      {showGuide && (
+        <div 
+          onClick={() => setShowGuide(false)}
+          style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.7)', zIndex: 9999, display: 'flex',
+            alignItems: 'center', justifyContent: 'center',
+            backdropFilter: 'blur(5px)', padding: '1.5rem'
+          }}
+        >
+          <div 
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: 'white',
+              borderRadius: '28px',
+              padding: '2rem 1.5rem',
+              maxWidth: '360px', width: '100%',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+              textAlign: 'center',
+              color: '#333'
+            }}
+          >
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>❤️</div>
+            <h3 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#e11d48', marginBottom: '0.8rem', letterSpacing: '-1px' }}>
+              즐겨찾기 등록 완료!
+            </h3>
+            <p style={{ fontSize: '1.1rem', color: '#475569', fontWeight: 700, marginBottom: '1.5rem', lineHeight: 1.5 }}>
+              이제 이 배의 소식을<br/>항상 편하게 보실 수 있습니다.
+            </p>
+
+            <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '1.2rem', marginBottom: '1.5rem', textAlign: 'left', border: '2px solid #e2e8f0' }}>
+              <p style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.8rem' }}>
+                💡 휴대폰 화면에 넣는 법:
+              </p>
+              
+              {isIOS ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                  <div style={{ fontSize: '1rem', color: '#334155', display: 'flex', gap: '8px' }}>
+                    <span style={{color:'#e11d48', fontWeight:900}}>①</span>
+                    <span>하단에 <b>사각형 화살표(↑)</b> 누르기</span>
+                  </div>
+                  <div style={{ fontSize: '1rem', color: '#334155', display: 'flex', gap: '8px' }}>
+                    <span style={{color:'#e11d48', fontWeight:900}}>②</span>
+                    <span><b>'홈 화면에 추가'</b> 찾아서 누르기</span>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                  <div style={{ fontSize: '1rem', color: '#334155', display: 'flex', gap: '8px' }}>
+                    <span style={{color:'#e11d48', fontWeight:900}}>①</span>
+                    <span>상단이나 하단에 <b>점 세개(⋮)</b> 누르기</span>
+                  </div>
+                  <div style={{ fontSize: '1rem', color: '#334155', display: 'flex', gap: '8px' }}>
+                    <span style={{color:'#e11d48', fontWeight:900}}>②</span>
+                    <span><b>'홈 화면에 추가'</b> 누르기</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={() => setShowGuide(false)}
+              style={{
+                width: '100%', padding: '1.1rem', borderRadius: '18px',
+                background: '#0f172a', color: '#fff', 
+                fontWeight: 900, fontSize: '1.2rem',
+                border: 'none', cursor: 'pointer',
+                boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
+              }}
+            >
+              잘 알겠습니다
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
