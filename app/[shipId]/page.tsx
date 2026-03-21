@@ -4,7 +4,7 @@ import styles from './page.module.css';
 import { Tracker, ActionButton, FavoriteButton } from './ClientInteractions';
 import { BandStatusButton } from './BandStatusButton';
 import { ShieldCheck, Activity, MapPin, Zap, CheckSquare, Navigation, ShieldAlert } from 'lucide-react';
-import { fetchShipSchedule, getStatusInfo, formatTime } from '../lib/komsa';
+import { fetchShipSchedule, getStatusInfo, formatTime, formatDate } from '../lib/komsa';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0; // 캐시 즉시 무효화
@@ -21,6 +21,14 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
   if (!ship) return notFound();
 
   const config = await prisma.systemConfig.findUnique({ where: { id: 'global' } });
+
+  // 오늘 날짜 및 요일 포맷 정보 준비
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  const dayName = today.toLocaleDateString('ko-KR', { weekday: 'short' });
+  const displayDate = `${formatDate(`${yyyy}${mm}${dd}`)} (${dayName})`;
 
   // KOMSA API로 운항 일정 조회
   let schedules = null;
@@ -83,11 +91,20 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
       </header>
 
       <div className={styles.statusBox}>
-        <div className={styles.statusLabelContainer}>
-          <span className={styles.statusLabel}>
-             ● 실시간 데이터 연동 중 
-          </span>
-          <span className={styles.updateTime}>
+        <div className={styles.statusLabelContainer} style={{ marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <span className={styles.statusLabel} style={{ fontSize: '0.75rem', opacity: 0.8 }}>
+               ● 실시간 데이터 연동 중 
+            </span>
+            <div style={{ 
+              fontSize: '1rem', color: '#00d4ff', fontWeight: 900, 
+              letterSpacing: '-0.5px', background: 'rgba(0,212,255,0.1)',
+              padding: '4px 10px', borderRadius: '12px', border: '1px solid rgba(0,212,255,0.2)'
+            }}>
+              📅 {displayDate} 운항 기준
+            </div>
+          </div>
+          <span className={styles.updateTime} style={{ alignSelf: 'flex-start', marginTop: '4px' }}>
              방금 업데이트됨
           </span>
         </div>
