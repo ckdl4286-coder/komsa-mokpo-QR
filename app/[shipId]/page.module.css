@@ -4,8 +4,8 @@
   max-width: 500px;
   margin: 0 auto;
   min-height: 100vh;
-  /* 🌊 청명하고 깊은 블루 그라데이션 (톤업) */
-  background: linear-gradient(165deg, #003366 0%, #001f3f 40%, #001025 100%);
+  /* 🌊 더욱 청명하고 밝아진 시그니처 블루 그라데이션 */
+  background: linear-gradient(165deg, #004e92 0%, #002d5a 45%, #051f42 100%);
   color: #ffffff;
   position: relative;
   overflow: hidden;

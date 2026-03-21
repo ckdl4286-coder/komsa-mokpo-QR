@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import styles from './admin.module.css';
 import { Copy, Link as LinkIcon, BarChart2, Edit2, Trash2, Calendar, User, Users, CalendarDays, Settings, Star, ExternalLink, Activity, Target, PlusCircle, Ship as ShipIcon, ChevronRight, Heart, AlertCircle, RotateCcw } from 'lucide-react';
-import { updateCoreLink, updateWeather, deleteCustomLink, addCustomLink } from './actions';
+import { updateCoreLink, updateWeather, deleteCustomLink, addCustomLink, updateCustomLink } from './actions';
 
 export default function ShipDashboard({ ship, config, overallStats, urlOrigin, isGlobal = false }: any) {
   const [tab, setTab] = useState(isGlobal ? 'stats' : 'links');
@@ -187,14 +187,13 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
                <div className={styles.actions} style={{ display: 'flex', gap: '0.6rem', padding: '0.4rem 0' }}>
                   <button 
                     className={styles.actionBtn} 
-                    onClick={() => {
-                      const t = prompt('변경할 제목:', l.title);
-                      const u = prompt('변경할 주소(URL):', l.url);
-                      if (t && u) {
-                        // @ts-ignore
-                        import('./actions').then(m => m.updateCustomLink(l.id, t, u));
-                      }
-                    }} 
+                     onClick={() => {
+                        const t = prompt('변경할 제목:', l.title);
+                        const u = prompt('변경할 주소(URL):', l.url);
+                        if (t && u) {
+                           updateCustomLink(l.id, t, u);
+                        }
+                     }} 
                     style={{ 
                       color: '#0ea5e9', 
                       backgroundColor: 'rgba(14, 165, 233, 0.1)', 
