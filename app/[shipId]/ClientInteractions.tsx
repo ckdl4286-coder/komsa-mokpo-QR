@@ -1,4 +1,5 @@
 'use client';
+// Vercel Deploy Trigger [2026.03.21.1330]
 
 import React, { useEffect, useState } from 'react';
 import { ExternalLink, Navigation, Info, Zap, Bus, CalendarClock, ChevronRight, CheckSquare, Anchor, Heart } from 'lucide-react';
