@@ -102,7 +102,7 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
 
         <div style={{ marginTop: '1.2rem' }}>
            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', marginBottom: '0.8rem', textAlign: 'center' }}>
-              ※ 전체 선박 운항 여부 및 실시간 변동 사항은 밴드에서 확인하세요.
+              ※ 전체 선박 운항 여부 · 실시간 변동 알림은 밴드에서 확인
            </p>
            <BandStatusButton shipId={ship.id} />
         </div>
