@@ -127,6 +127,90 @@ export default function ShipDashboard({ ship, config, overallStats, urlOrigin, i
           <CoreLinkCard id="checklistUrl" title="출항 전 점검표" url={ship.checklistUrl} icon="clipboard" color="navy" editing={editing} setEditing={setEditing} editingVal={editingVal} setEditingVal={setEditingVal} onSave={() => handleSaveCore("checklistUrl")} />
           <CoreLinkCard id="regulationsUrl" title="운항관리규정" url={ship.regulationsUrl} icon="book" color="blue" editing={editing} setEditing={setEditing} editingVal={editingVal} setEditingVal={setEditingVal} onSave={() => handleSaveCore("regulationsUrl")} />
           <CoreLinkCard id="safetyInfoUrl" title="여객선 안전정보" url={ship.safetyInfoUrl} icon="anchor" color="teal" editing={editing} setEditing={setEditing} editingVal={editingVal} setEditingVal={setEditingVal} onSave={() => handleSaveCore("safetyInfoUrl")} />
+          
+          <div className={styles.linkCard} style={{ border: '1px solid #e2e8f0', background: '#f8fafc' }}>
+            <div className={styles.linkLeft}>
+               <div className={`${styles.linkIconBox} ${styles.blue}`} style={{ background: '#0ea5e9', color: '#fff' }}><Activity size={24} /></div>
+               <div className={styles.linkInfo}>
+                 <h4>기상청 해상예보 구역 코드</h4>
+                 {editing !== 'weatherRegId' ? (
+                   <>
+                     <p>{ship.weatherRegId || '미설정 (기본값: 서해남부앞바다)'} <span style={{fontSize: '0.75rem', color: '#94a3b8', marginLeft: '0.5rem'}}>(예: 12A30100)</span></p>
+                     <div className={styles.badges}>
+                       <span className={`${styles.badge} ${styles.primary}`}>기상 정보</span>
+                       <span className={`${styles.badge} ${styles.active}`}>{ship.weatherRegId ? '설정됨' : '기본 구역'}</span>
+                     </div>
+                   </>
+                 ) : (
+                   <div className={styles.editInline}>
+                     <input 
+                        type="text"
+                        className={styles.editInput} 
+                        autoFocus 
+                        defaultValue={ship.weatherRegId || ''} 
+                        onChange={(e)=>setEditingVal(e.target.value)}
+                        placeholder="기상청 구역 코드 입력 (8자리)"
+                        style={{ width: '100%', padding: '0.5rem' }}
+                     />
+                     <div style={{display:'flex', gap:'0.5rem', marginTop: '0.5rem'}}>
+                       <button className={styles.editSave} onClick={() => handleSaveCore('weatherRegId')}>저장</button>
+                       <button className={styles.actionBtn} onClick={()=>setEditing(null)}>취소</button>
+                     </div>
+                   </div>
+                 )}
+               </div>
+            </div>
+            {editing !== 'weatherRegId' && (
+              <div className={styles.actions}>
+                 <button className={styles.actionBtn} onClick={() => { setEditing('weatherRegId'); setEditingVal(ship.weatherRegId||''); }}><Edit2 size={14}/> {ship.weatherRegId ? '코드 수정' : '코드 설정'}</button>
+              </div>
+            )}
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
+            <div className={styles.linkCard} style={{ padding: '1rem', background: '#f8fafc' }}>
+               <h4 style={{ fontSize: '0.85rem', marginBottom: '0.5rem', color: '#475569' }}>💨 최대풍속 기준</h4>
+               {editing !== 'limitWind' ? (
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 800 }}>{ship.limitWind || '12'}m/s 이상</span>
+                    <button onClick={() => { setEditing('limitWind'); setEditingVal(ship.limitWind||'12'); }} style={{ background: 'none', border: 'none', color: '#0ea5e9', cursor: 'pointer' }}><Edit2 size={12}/></button>
+                 </div>
+               ) : (
+                 <div style={{ display: 'flex', gap: '5px' }}>
+                    <input className={styles.editInput} style={{ padding: '2px 5px', width: '40px' }} defaultValue={ship.limitWind||'12'} onChange={(e)=>setEditingVal(e.target.value)} />
+                    <button onClick={() => handleSaveCore('limitWind')} style={{ background: '#10b981', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '10px', padding: '2px 5px' }}>저장</button>
+                 </div>
+               )}
+            </div>
+            <div className={styles.linkCard} style={{ padding: '1rem', background: '#f8fafc' }}>
+               <h4 style={{ fontSize: '0.85rem', marginBottom: '0.5rem', color: '#475569' }}>🌊 최대파고 기준</h4>
+               {editing !== 'limitWave' ? (
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 800 }}>{ship.limitWave || '2.0'}m 이상</span>
+                    <button onClick={() => { setEditing('limitWave'); setEditingVal(ship.limitWave||'2.0'); }} style={{ background: 'none', border: 'none', color: '#0ea5e9', cursor: 'pointer' }}><Edit2 size={12}/></button>
+                 </div>
+               ) : (
+                 <div style={{ display: 'flex', gap: '5px' }}>
+                    <input className={styles.editInput} style={{ padding: '2px 5px', width: '40px' }} defaultValue={ship.limitWave||'2.0'} onChange={(e)=>setEditingVal(e.target.value)} />
+                    <button onClick={() => handleSaveCore('limitWave')} style={{ background: '#10b981', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '10px', padding: '2px 5px' }}>저장</button>
+                 </div>
+               )}
+            </div>
+            <div className={styles.linkCard} style={{ padding: '1rem', background: '#f8fafc' }}>
+               <h4 style={{ fontSize: '0.85rem', marginBottom: '0.5rem', color: '#475569' }}>🌁 시정 기준</h4>
+               {editing !== 'limitVisibility' ? (
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 800 }}>{ship.limitVisibility || '1'}km 이내</span>
+                    <button onClick={() => { setEditing('limitVisibility'); setEditingVal(ship.limitVisibility||'1'); }} style={{ background: 'none', border: 'none', color: '#0ea5e9', cursor: 'pointer' }}><Edit2 size={12}/></button>
+                 </div>
+               ) : (
+                 <div style={{ display: 'flex', gap: '5px' }}>
+                    <input className={styles.editInput} style={{ padding: '2px 5px', width: '40px' }} defaultValue={ship.limitVisibility||'1'} onChange={(e)=>setEditingVal(e.target.value)} />
+                    <button onClick={() => handleSaveCore('limitVisibility')} style={{ background: '#10b981', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '10px', padding: '2px 5px' }}>저장</button>
+                 </div>
+               )}
+            </div>
+          </div>
 
           <div className={styles.linkCard}>
             <div className={styles.linkLeft}>

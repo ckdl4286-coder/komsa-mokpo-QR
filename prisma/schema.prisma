@@ -17,6 +17,10 @@ model Ship {
   checklistUrl   String?
   regulationsUrl String?
   safetyInfoUrl  String?
+  weatherRegId   String?    // 기상청 해상예보 구역 코드 (예: 12A30100)
+  limitWind      String?    // 출항 정지 풍속 기준 (예: 12m/s)
+  limitWave      String?    // 출항 정지 파고 기준 (예: 2.0m)
+  limitVisibility String?   // 출항 정지 가시거리 기준 (예: 1km)
   favoriteCount  Int        @default(0)
   links          ShipLink[]
   visits         Visit[]

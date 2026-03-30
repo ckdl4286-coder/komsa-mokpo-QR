@@ -13,7 +13,7 @@ export const revalidate = 0; // 캐시 즉시 무효화
 export default async function ShipPage({ params }: { params: Promise<{ shipId: string }> }) {
   const { shipId } = await params;
   const decodedSlug = decodeURIComponent(shipId);
-  const ship = await prisma.ship.findUnique({
+  const ship: any = await prisma.ship.findUnique({
     where: { urlSlug: decodedSlug },
     include: { links: true }
   });
@@ -47,6 +47,10 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
 
   const mainSchedule = schedules?.[0] ?? null;
   const statusInfo = getStatusInfo(mainSchedule);
+
+  // 🌊 기상청 해상 예보 조회
+  const { fetchSeaWeather } = await import('../lib/weather');
+  const weather = await fetchSeaWeather(ship.weatherRegId || '12A30100');
 
   return (
     <div className={styles.container}>
@@ -104,7 +108,7 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
             </div>
           </div>
 
-          {/* 🕐 운항 정보 리스트 */}
+          {/* 🕐 운항 정보 리스트 (위치 변경됨) */}
           {schedules && schedules.length > 0 && (
             <div style={{ fontSize: '0.9rem', color: '#475569', marginTop: '0.5rem', padding: '1.1rem', background: '#f8fafc', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
                {schedules.slice(0, 3).map((s:any, i:number) => {
@@ -131,17 +135,15 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
             </div>
           )}
 
+          {/* 기상청 날씨 및 안전 진단 카드 임시 제거 (사용자 요청) */}
           {statusInfo.reason && (
             <p style={{ color: '#ef4444', fontWeight: 800, fontSize: '0.85rem', textAlign: 'center', margin: '6px 0', border: '1px dashed #fee2e2', padding: '6px', borderRadius: '12px', background: '#fff5f5' }}>
               ⚠️ 사유: {statusInfo.reason}
             </p>
           )}
 
-          {/* 밴드 이동 */}
-          <div style={{ marginTop: '0.2rem' }}>
-             <p style={{ color: '#94a3b8', fontSize: '0.78rem', marginBottom: '0.6rem', textAlign: 'center', fontWeight: 600 }}>
-                ※ 전체 선박 운항상태 알림 (밴드)
-             </p>
+          {/* 밴드 이동 버튼 */}
+          <div style={{ marginTop: '0.8rem' }}>
              <BandStatusButton shipId={ship.id} />
           </div>
         </div>
@@ -187,8 +189,9 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
       </section>
 
       <section className={styles.section} style={{ marginTop: '2.5rem' }}>
-        <h2 className={styles.sectionTitle}>
-           <Activity size={18} /> 편리한 부가 서비스 안내
+        <h2 className={styles.sectionTitle} style={{ justifyContent: 'space-between' }}>
+           <span><Activity size={18} /> 편리한 부가 서비스 안내</span>
+           <img src="/komat_like.jpg" alt="최고 공단 캐릭터" style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #00d4ff', marginLeft: 'auto' }} />
         </h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {ship.links
