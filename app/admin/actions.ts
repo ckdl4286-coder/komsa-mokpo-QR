@@ -32,9 +32,19 @@ export async function addShip(formData: FormData) {
   const name = formData.get('name') as string;
   const slug = formData.get('slug') as string;
   if (!name || !slug) return;
-  await prisma.ship.create({
+  const ship = await prisma.ship.create({
     data: { name, urlSlug: slug }
   });
+
+  // 신규 선박 추가 시 3대 기본 부가 서비스 자동 연동
+  await prisma.shipLink.createMany({
+    data: [
+      { shipId: ship.id, title: '실시간 선박 위치 (MTIS 앱)', url: 'https://play.google.com/store/apps/details?id=kr.or.komsa.mtis&pcampaignid=web_share', icon: 'MapPin' },
+      { shipId: ship.id, title: 'VR 여객선 안전체험', url: 'https://www.komsa.or.kr/kor/sub03_021101.do', icon: 'Glasses' },
+      { shipId: ship.id, title: '전기차 배터리 안심 점검 서비스', url: 'https://ev-booking-aad7a.web.app/', icon: 'BatteryCharging' }
+    ]
+  });
+
   revalidatePath('/admin');
 }
 
