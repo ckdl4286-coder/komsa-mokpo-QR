@@ -22,21 +22,6 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
 
   const config = await prisma.systemConfig.findUnique({ where: { id: 'global' } });
 
-  // 오늘 날짜 및 요일 포맷 정보 준비
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
-  const dayOfWeek = today.getDay(); // 0: 일, 6: 토
-  const dayName = today.toLocaleDateString('ko-KR', { weekday: 'short' });
-  const dayColor = dayOfWeek === 0 ? '#ef4444' : (dayOfWeek === 6 ? '#3b82f6' : '#475569');
-  
-  const displayDate = (
-    <>
-      {formatDate(`${yyyy}${mm}${dd}`)} <span style={{ color: dayColor, fontWeight: 900 }}>({dayName})</span>
-    </>
-  );
-
   // KOMSA API로 운항 일정 조회
   let schedules = null;
   try {
@@ -47,6 +32,35 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
 
   const mainSchedule = schedules?.[0] ?? null;
   const statusInfo = getStatusInfo(mainSchedule);
+
+  // KST 기준 날짜 처리 및 API 실제 운항 날짜 반영
+  let targetDateString = '';
+  if (mainSchedule && mainSchedule.rlvt_ymd) {
+    targetDateString = mainSchedule.rlvt_ymd; // ex: '20260506'
+  } else {
+    // API 응답이 없을 경우 현재 한국 시간(KST)으로 fallback
+    const kstDate = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
+    const yyyy = kstDate.getUTCFullYear();
+    const mm = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(kstDate.getUTCDate()).padStart(2, '0');
+    targetDateString = `${yyyy}${mm}${dd}`;
+  }
+
+  const yyyy = targetDateString.slice(0, 4);
+  const mm = parseInt(targetDateString.slice(4, 6), 10);
+  const dd = parseInt(targetDateString.slice(6, 8), 10);
+  
+  // 해당 날짜의 요일 계산 (KST 기준)
+  const targetDateObj = new Date(`${yyyy}-${targetDateString.slice(4, 6)}-${targetDateString.slice(6, 8)}T00:00:00+09:00`);
+  const dayOfWeek = targetDateObj.getDay();
+  const dayName = targetDateObj.toLocaleDateString('ko-KR', { weekday: 'short' });
+  const dayColor = dayOfWeek === 0 ? '#ef4444' : (dayOfWeek === 6 ? '#3b82f6' : '#475569');
+  
+  const displayDate = (
+    <>
+      {mm}월 {dd}일 <span style={{ color: dayColor, fontWeight: 900 }}>({dayName})</span>
+    </>
+  );
 
   // 🌊 기상청 해상 예보 조회
   const { fetchSeaWeather } = await import('../lib/weather');
