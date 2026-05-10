@@ -116,12 +116,12 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
             </div>
           </div>
 
-          {/* 🕐 운항 정보 리스트 (위치 변경됨) */}
+          {/* 🕐 운항 정보 리스트 */}
           {schedules && schedules.length > 0 && (
             <div style={{ fontSize: '0.9rem', color: '#475569', marginTop: '0.5rem', padding: '1.1rem', background: '#f8fafc', borderRadius: '20px', border: '1px solid #f1f5f9' }}>
-               {schedules.slice(0, 3).map((s:any, i:number) => {
-                 const statusTxt = s.sail_st || '정상';
-                 const isCancel = statusTxt.includes('통제') || statusTxt.includes('결항');
+               {schedules.slice(0, 5).map((s:any, i:number) => {
+                 const statusTxt = s.nvg_stts_nm || s.nvg_se_nm || '정상';
+                 const isCancel = statusTxt.includes('통제') || statusTxt.includes('결항') || statusTxt.includes('비운항');
                  const statusColor = isCancel ? '#ef4444' : '#10b981';
                  
                  return (
@@ -140,6 +140,28 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
                    </div>
                  );
                })}
+               {schedules.length > 5 && (
+                 <details style={{ marginTop: '0.3rem' }}>
+                   <summary style={{ cursor: 'pointer', textAlign: 'center', color: '#0284c7', fontWeight: 800, fontSize: '0.85rem', padding: '0.4rem', borderRadius: '10px', background: '#e0f2fe' }}>
+                     나머지 {schedules.length - 5}개 스케줄 더보기 ▼
+                   </summary>
+                   <div style={{ marginTop: '0.6rem' }}>
+                     {schedules.slice(5).map((s:any, i:number) => {
+                       const statusTxt = s.nvg_stts_nm || s.nvg_se_nm || '정상';
+                       const isCancel = statusTxt.includes('통제') || statusTxt.includes('결항') || statusTxt.includes('비운항');
+                       const statusColor = isCancel ? '#ef4444' : '#10b981';
+                       return (
+                         <div key={i+5} style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', justifyContent: 'center', marginBottom: '0.6rem' }}>
+                           <span style={{ fontWeight: 900, fontSize: '1rem', color: '#1e293b' }}>🕐 {formatTime(s.sail_tm)}</span>
+                           <span style={{ fontSize: '0.72rem', fontWeight: 900, padding: '3px 10px', borderRadius: '6px', background: `${statusColor}11`, border: `1px solid ${statusColor}44`, color: statusColor }}>{statusTxt}</span>
+                           <span style={{ opacity: 0.1 }}>|</span>
+                           <span style={{ fontWeight: 600, fontSize: '0.88rem', color: '#64748b' }}>{s.oport_nm} ➔ {s.dest_nm}</span>
+                         </div>
+                       );
+                     })}
+                   </div>
+                 </details>
+               )}
             </div>
           )}
 
