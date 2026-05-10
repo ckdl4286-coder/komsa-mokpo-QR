@@ -42,8 +42,8 @@ function getToday(): string {
 }
 
 /**
- * 특정 선박의 내일 운항 일정을 가져옵니다.
- * 내일 데이터가 없으면 오늘 데이터를 반환합니다.
+ * 특정 선박의 오늘 운항 일정을 가져옵니다.
+ * 오늘 데이터가 없으면 내일 데이터를 반환합니다.
  */
 export async function fetchShipSchedule(shipName: string): Promise<SailSchedule[] | null> {
   const apiKey = process.env.KOMSA_API_KEY;
@@ -52,15 +52,15 @@ export async function fetchShipSchedule(shipName: string): Promise<SailSchedule[
     return null;
   }
 
-  const tomorrow = getTomorrow();
   const today = getToday();
+  const tomorrow = getTomorrow();
 
-  // 내일 일정 조회
-  const schedules = await fetchScheduleByDate(shipName, tomorrow, apiKey);
+  // 오늘 일정 먼저 조회
+  const schedules = await fetchScheduleByDate(shipName, today, apiKey);
   if (schedules && schedules.length > 0) return schedules;
 
-  // 내일 데이터가 없으면 오늘 조회
-  return fetchScheduleByDate(shipName, today, apiKey);
+  // 오늘 데이터가 없으면 내일 조회
+  return fetchScheduleByDate(shipName, tomorrow, apiKey);
 }
 
 async function fetchScheduleByDate(

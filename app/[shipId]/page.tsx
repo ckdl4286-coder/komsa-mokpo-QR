@@ -33,32 +33,26 @@ export default async function ShipPage({ params }: { params: Promise<{ shipId: s
   const mainSchedule = schedules?.[0] ?? null;
   const statusInfo = getStatusInfo(mainSchedule);
 
-  // KST 기준 날짜 처리 및 API 실제 운항 날짜 반영
-  let targetDateString = '';
-  if (mainSchedule && mainSchedule.rlvt_ymd) {
-    targetDateString = mainSchedule.rlvt_ymd; // ex: '20260506'
-  } else {
-    // API 응답이 없을 경우 현재 한국 시간(KST)으로 fallback
-    const kstDate = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
-    const yyyy = kstDate.getUTCFullYear();
-    const mm = String(kstDate.getUTCMonth() + 1).padStart(2, '0');
-    const dd = String(kstDate.getUTCDate()).padStart(2, '0');
-    targetDateString = `${yyyy}${mm}${dd}`;
-  }
-
-  const yyyy = targetDateString.slice(0, 4);
-  const mm = parseInt(targetDateString.slice(4, 6), 10);
-  const dd = parseInt(targetDateString.slice(6, 8), 10);
+  // KST 기준 오늘 날짜 (Vercel UTC 서버에서도 정확히 동작)
+  const kstFormatter = new Intl.DateTimeFormat('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    weekday: 'short',
+  });
+  const kstParts = kstFormatter.formatToParts(new Date());
+  const kstMonth = kstParts.find(p => p.type === 'month')?.value || '';
+  const kstDay = kstParts.find(p => p.type === 'day')?.value || '';
+  const kstWeekday = kstParts.find(p => p.type === 'weekday')?.value || '';
   
-  // 해당 날짜의 요일 계산 (KST 기준)
-  const targetDateObj = new Date(`${yyyy}-${targetDateString.slice(4, 6)}-${targetDateString.slice(6, 8)}T00:00:00+09:00`);
-  const dayOfWeek = targetDateObj.getDay();
-  const dayName = targetDateObj.toLocaleDateString('ko-KR', { weekday: 'short' });
-  const dayColor = dayOfWeek === 0 ? '#ef4444' : (dayOfWeek === 6 ? '#3b82f6' : '#475569');
+  // 요일별 색상
+  const kstDow = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Seoul', weekday: 'short' }).format(new Date());
+  const dayColor = kstDow === 'Sun' ? '#ef4444' : (kstDow === 'Sat' ? '#3b82f6' : '#475569');
   
   const displayDate = (
     <>
-      {mm}월 {dd}일 <span style={{ color: dayColor, fontWeight: 900 }}>({dayName})</span>
+      {kstMonth}월 {kstDay}일 <span style={{ color: dayColor, fontWeight: 900 }}>({kstWeekday})</span>
     </>
   );
 
